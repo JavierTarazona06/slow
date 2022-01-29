@@ -169,12 +169,10 @@ class ConexionBaseDeDatosSlow():
         lista = self.cursorSlow.fetchall()
         for i in lista:
             print(i)
-'''
+
 def main():
     conexionSlow = ConexionBaseDeDatosSlow()
     print(conexionSlow)
-    #conexionSlow.cursorSlow.execute("DELETE FROM USUARIOS WHERE IDUSUARIO=3")
-    #conexionSlow.cursorSlow.execute("UPDATE USUARIOS SET POLICIASASIGNADOS=0 WHERE IDUSUARIO=1")
     conexionSlow.crearTablaUsuarios()
     conexionSlow.crearTablaDeteccionYVideos()
     conexionSlow.crearTablaVias()
@@ -182,7 +180,7 @@ def main():
     conexionSlow.cerrarBaseDeDatosSlow()
 
 main()
-'''
+
 #conexionSlow = ConexionBaseDeDatosSlow()
 #conexionSlow.cursorSlow.execute('''INSERT INTO USUARIOS (
             #USUARIO,CLAVE,NOMBRE,APELLIDO,TIPODOCUMENTO,NUMERODOCUMENTO,
