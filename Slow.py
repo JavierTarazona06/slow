@@ -1004,10 +1004,8 @@ class history(info):
         self.contador+=1
         if (self.contador % 2 ==0):
           self.y+=300
-    self.create_video() 
     
-        
-    
+    self.create_video()
 
     self.canvas.config(yscrollcommand=self.scrollbar.set, scrollregion = self.canvas.bbox("all"))
     
