@@ -1078,24 +1078,4 @@ History_Videos =  [(1,"/home/runner/POO/video2.mp4","CARRETERA","Bogotá D.C","k
                     (1,"/home/runner/POO/video2.mp4","CARRETERA","Bogotá D.C","km 7 - Tunja","13/10/2021"),
                     (1,"/home/runner/POO/video2.mp4","CARRETERA","Bogotá D.C","km 7 - Tunja","14/10/2021"),
                     ]
-'''
-if __name__ == '__main__':
-  root = Tk()
-  ac=False  
-  id = 1
-  play=False
-  root.title("Slow")
-  root.geometry('1366x768')
-  root.configure(bg='white')
-
-  History_Videos =  [(1,"/home/runner/POO/video2.mp4","CARRETERA","Bogotá D.C","km 7 - Tunja","10/10/2021"),
-                    (1,"/home/runner/POO/video2.mp4","CARRETERA","Bogotá D.C","km 7 - Tunja","11/10/2021"),
-                    (1,"/home/runner/POO/video2.mp4","CARRETERA","Bogotá D.C","km 7 - Tunja","12/10/2021"),
-                    (1,"/home/runner/POO/video2.mp4","CARRETERA","Bogotá D.C","km 7 - Tunja","13/10/2021"),
-                    (1,"/home/runner/POO/video2.mp4","CARRETERA","Bogotá D.C","km 7 - Tunja","14/10/2021"),
-                    ]
-  vias= ["Autopista/Carretera", "Arterias", "Principales", "Locales y Especiales"]
-  
-  app = App(root)
-  root.mainloop()
-'''
+vias= ["Autopista/Carretera", "Arterias", "Principales", "Locales y Especiales"]
