@@ -130,6 +130,7 @@ class VentanaInicioSesion(VentanaMadre.VentanaMadre):
         if iniciar:
             self.ventana.destroy()
             import Slow as slowApp
+            slowApp.elUsuario(idUsuario)
         else:
             messagebox.showerror('Error en Inicio de Sesión', 'Usuario o Clave Incorrecta\nFavor verifique e inténtelo nuevamente.')
         conexionSlow.cerrarBaseDeDatosSlow()
@@ -149,6 +150,7 @@ class VentanaInicioSesion(VentanaMadre.VentanaMadre):
         if iniciar:
             self.ventana.destroy()
             import Slow as slowApp
+            slowApp.elUsuario(idUsuario)
         else:
             messagebox.showerror('Error en Inicio de Sesión', 'Usuario o Clave Incorrecta\nFavor verifique e inténtelo nuevamente.')
         conexionSlow.cerrarBaseDeDatosSlow()

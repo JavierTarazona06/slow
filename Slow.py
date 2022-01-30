@@ -5,6 +5,7 @@ from turtle import width
 from PIL import ImageTk, Image
 import cv2
 import imutils
+import ConexionBaseDeDatosSlow as bD
 
 
 # interfaz principal
@@ -38,12 +39,20 @@ class App:
     self.BottExit.modzise(130,50)
     self.BottExit.create()
 
+    self.BottExit.panel.bind("<Enter>",self.enCerrarSesionBoton)
+    self.BottExit.panel.bind("<Leave>",self.fueraCerrarSesionBoton)
+
   def cerrarSesionBotonAccion():
     root.destroy()
     from InicioSesion import VentanaInicioSesion
     ventanaInicioSesion = VentanaInicioSesion()
     ventanaInicioSesion.ventana.mainloop()
+
+  def enCerrarSesionBoton(self, event):
+    self.BottExit.panel.config(bd=2)
   
+  def fueraCerrarSesionBoton(self, event):
+    self.BottExit.panel.config(bd=0)
 
   def create_botton_info(self,positiony):
     self.positiony=positiony
@@ -787,12 +796,36 @@ class history(info):
 class Lista(object):
   pass
 
+#Datos
+
+def tomarInfoUsuario():
+  global idUsuario
+  global infoUsuario
+  conexionSlow = bD.ConexionBaseDeDatosSlow()
+  conexionSlow.cursorSlow.execute(f"SELECT * FROM USUARIOS WHERE IDUSUARIO={idUsuario}")
+  listaInfoUsuario = conexionSlow.cursorSlow.fetchall()
+#Crea Ventana
+
+def elUsuario(usuario):
+  global idUsuario
+  global infoUsuario
+  idUsuario = usuario
+  root.title(f"SLOW - {str(idUsuario)}")
+  infoUsuario = tomarInfoUsuario()
+  app = App(root)
+  root.mainloop()
+
 root = Tk()
+
 ac=False  
 id = 1
 play=False
-root.title("Slow")
-root.geometry('1366x768')
+root.title("SLOW")
+ancho = root.winfo_screenwidth()
+alto = root.winfo_screenheight()
+root.geometry(f"{ancho}x{alto}+0+0")
+root.resizable(False,False)
+root.iconbitmap("RecursosGraficos\\Logo_Slow_Icon_Map.ico")
 root.configure(bg='white')
 
 History_Videos =  [(1,"/home/runner/POO/video2.mp4","CARRETERA","Bogotá D.C","km 7 - Tunja","10/10/2021"),
@@ -801,10 +834,6 @@ History_Videos =  [(1,"/home/runner/POO/video2.mp4","CARRETERA","Bogotá D.C","k
                     (1,"/home/runner/POO/video2.mp4","CARRETERA","Bogotá D.C","km 7 - Tunja","13/10/2021"),
                     (1,"/home/runner/POO/video2.mp4","CARRETERA","Bogotá D.C","km 7 - Tunja","14/10/2021"),
                     ]
-  
-  
-app = App(root)
-root.mainloop()
 '''
 if __name__ == '__main__':
   root = Tk()
