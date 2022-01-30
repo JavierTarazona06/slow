@@ -1,9 +1,12 @@
-from distutils import command
 from tkinter import *
+import tkinter as tk
 from tkinter import filedialog
-from turtle import width
+from tkinter import messagebox as MessageBox
+from tkinter import ttk
 from PIL import ImageTk, Image
 import cv2
+import ctypes
+from functools import partial
 import imutils
 import ConexionBaseDeDatosSlow as bD
 
@@ -11,6 +14,8 @@ import ConexionBaseDeDatosSlow as bD
 # interfaz principal
 class App:
   def __init__(self, root=None):
+    
+    
     self.root = root
     self.frame =Frame(self.root,bg='white',width=1366,height=768)
     self.PosBottonY=0.65
@@ -110,26 +115,36 @@ class App:
     self.frame.pack()
   # ir a interfaz de informacion
   def make_page_info(self):
+    global ac
+    ac=False
     self.page_info = info(master=self.root, app=self)
     self.frame.pack_forget()
     self.page_info.start_page()
   # ir a interfaz de datos
   def make_page_date(self):
+    global ac
+    ac=False
     self.page_date = Date(master=self.root, app=self)
     self.frame.pack_forget()
     self.page_date.start_page()
   
   def make_page_video(self):
+    global ac
+    ac=False
     self.page_video = video(master=self.root, app=self)
     self.frame.pack_forget()
     self.page_video.start_page()
   
   def make_page_vias(self):
+    global ac
+    ac=False
     self.page_vias = Vias(master=self.root, app=self)
     self.frame.pack_forget()
     self.page_vias.start_page()
   
   def make_page_history(self):
+    global ac
+    ac=False
     self.page_history = history(master=self.root, app=self)
     self.frame.pack_forget()
     self.page_history.start_page()
@@ -187,7 +202,9 @@ class menu(App):
   def start_page(self):
     self.frame.place(in_=self.root, anchor = CENTER, relx=.5, rely=.78)
     self.root.bind("<1>", self.on_click)
-    self.additional.bind("<1>", self.on_click)
+    if (self.additional != None):
+
+      self.additional.bind("<1>", self.on_click)
     
 
   def on_click(self, event):
@@ -286,6 +303,8 @@ class info:
     self.frame.pack()
 
   def go_back(self):
+    global ac
+    ac=False
     self.frame.pack_forget()
     self.Principal = App(self.master)
 
@@ -357,6 +376,7 @@ class video(info):
   
   def make_page_detection(self):
     self.page_detection = detection(self.File,master=self.master, app=self)
+    
     self.frame.pack_forget()
     self.page_detection.start_page()
     
@@ -377,6 +397,13 @@ class video(info):
 
 class Vias(info):
   def own_widgets(self):
+
+    self.canvas = Canvas(self.frame, bg='white')
+    self.canvas.place(relx = 0.5,rely=0.58,anchor = CENTER, relheight=0.63,relwidth=0.7)
+
+    self.scrollbar = Scrollbar(self.canvas,bg='white')
+    self.scrollbar.place(relx = 0.99,rely=0.5,anchor = CENTER, relheight=1)
+
     self.inDate = ImInter(self.frame,"Vias Icon.png", 0.82,0.06)
     self.inDate.sizeImage(80,80)
     self.inDate.create()
@@ -389,33 +416,36 @@ class Vias(info):
     self.police.sizeImage(100,100)
     self.police.create()
 
-    self.Autopista = ImInter(self.frame,"Autopista.png", 0.15,0.37) 
-    self.Autopista.sizeImage(90,240)
-    self.Autopista.create()
+#    self.Autopista = ImInter(self.frame,"Autopista.png", 0.15,0.37) 
+#    self.Autopista.sizeImage(90,240)
+#    self.Autopista.create()
 
-    self.Arterias = ImInter(self.frame,"Arterias.png", 0.15,0.5) 
-    self.Arterias.sizeImage(90,240)
-    self.Arterias.create()
+#    self.Arterias = ImInter(self.frame,"Arterias.png", 0.15,0.5) 
+#    self.Arterias.sizeImage(90,240)
+#    self.Arterias.create()
+#
+#    self.Principales = ImInter(self.frame,"Principales.png", 0.15,0.63) 
+#    self.Principales.sizeImage(90,240)
+#    self.Principales.create()
+ 
+#    self.Locales = ImInter(self.frame,"Locales.png", 0.15,0.76) 
+#    self.Locales.sizeImage(90,240)
+#    self.Locales.create()
+ 
+#    self.Textos = ImInter(self.frame,"Textos.png", 0.4,0.56) 
+#    self.Textos.sizeImage(400,240)
+#    self.Textos.create()
+ 
+#    self.Textos2 = ImInter(self.frame,"Textos2.png", 0.75,0.56) 
+#    self.Textos2.sizeImage(400,600)
+#    self.Textos2.create()
 
-    self.Principales = ImInter(self.frame,"Principales.png", 0.15,0.63) 
-    self.Principales.sizeImage(90,240)
-    self.Principales.create()
-
-    self.Locales = ImInter(self.frame,"Locales.png", 0.15,0.76) 
-    self.Locales.sizeImage(90,240)
-    self.Locales.create()
-
-    self.Textos = ImInter(self.frame,"Textos.png", 0.4,0.56) 
-    self.Textos.sizeImage(400,240)
-    self.Textos.create()
-
-    self.Textos2 = ImInter(self.frame,"Textos2.png", 0.75,0.56) 
-    self.Textos2.sizeImage(400,600)
-    self.Textos2.create()
+  
 
     self.BottVehiculos = BottInter(self.frame,"Vehiculos.png",0.7,0.25, None,self.go_vehiculos)
     self.BottVehiculos.modzise(130,70)
     self.BottVehiculos.create()
+
 
   def go_vehiculos(self):
     self.page_vehiculos = Vehiculos(master=self.master, app=self)
@@ -437,6 +467,7 @@ class Vias(info):
 # Daniel
 class Vehiculos(info):
   def own_widgets(self):
+
     self.inDate = ImInter(self.frame,"Vias Icon.png", 0.82,0.06)
     self.inDate.sizeImage(80,80)
     self.inDate.create()
@@ -501,7 +532,7 @@ class detection(info):
 
     self.positiony=positiony
     self.Bottvelo = BottInter(self.frame,"velocidadInstantanea.png",self.positiony, 0.7,
-    'Hisrórico',None)
+    'Velocidad instantanea',self.make_page_graficas)
     self.Bottvelo.modzise(50,50)
     self.Bottvelo.create()
     
@@ -511,11 +542,21 @@ class detection(info):
 
     self.positiony=positiony
     self.Bottvelo2 = BottInter(self.frame,"velocidadInstantanea2.png",self.positiony, 0.7,
-    'Hisrórico',None)
+    'Velocidad promedio',self.make_page_graficas2)
     self.Bottvelo2.modzise(50,50)
     self.Bottvelo2.create()
     
     self.open_create_text(self.Bottvelo2)
+
+  def make_page_graficas(self):
+    self.page_graficas = Graficas(master=self.master, app=self)
+    self.frame.pack_forget()
+    self.page_graficas.start_page()
+
+  def make_page_graficas2(self):
+    self.page_graficas2 = Graficas2(master=self.master, app=self)
+    self.frame.pack_forget()
+    self.page_graficas2.start_page()
 
   def open_create_text(self,botton):
     
@@ -531,31 +572,83 @@ class detection(info):
     self.name="video"
     if (ac== False):
 
-      self.Menu = menu(self.name,root=self.frame, app=self)
+      self.Menu = menu(self.name,root=self.frame, app=self,)
       
     
       self.Menu.start_page()
       ac=True
+  
+  def go_back(self):
+    global ac
+    ac=False
+    self.frame.pack_forget()
+    self.go_back = self.app.start_page()
 
 
 
+class Graficas():
+  def __init__(self, master=None, app=None):
+    self.master = master
+    self.app = app
+    self.frame = Frame(self.master,background="#d6d6d6",width=1366,height=768)
+    self.common_widgets()
+    self.own_widgets()
+    self.frame.pack()
 
-class graficas:
-    pass
+  def common_widgets(self):
+
+    self.Button_regresar = BottInter(self.frame,"regresar.png",0.85,0.9,None, self.make_regresar)
+    self.Button_regresar.modzise(250,60)
+    self.Button_regresar.create()
+
+  def own_widgets(self):
+
+    self.Button_ver_tabla = BottInter(self.frame,"ver_tabla.png",0.85,0.7, None,self.make_tabla_graficas)
+    self.Button_ver_tabla.modzise(250,60)
+    self.Button_ver_tabla.create()
+
+    self.Button_agregar_vehiculo = BottInter(self.frame,"agregar_vehiculo.png",0.85,0.8,None, self.make_agregar_vehiculo)
+    self.Button_agregar_vehiculo.modzise(250,60)
+    self.Button_agregar_vehiculo.create()
+  
+  def make_tabla_graficas(self):
+    self.page_tabla_graficas = tablaGraficas(master=self.master, app=self)
+    self.frame.pack_forget()
+    self.page_tabla_graficas.start_page()
+
+  def make_agregar_vehiculo(self):
+    self.page_agregar_vehiculo = guardarVehiculo(master=self.master, app=self)
+    self.frame.pack_forget()
+    self.page_agregar_vehiculo.start_page()
+
+  def make_regresar(self):
+    self.page_regresar = detection(master=self.master, app=self)
+    self.frame.pack_forget()
+    self.page_regresar.start_page()
 
 
-class tablagraficas:
+  def start_page(self):
+    self.frame.pack()
+
+  
+
+   
+
+class Graficas2(Graficas):
+  a=1
+
+class tablaGraficas(info):
   pass
-# grevy
-class guardarVehiculo(info):
-  pass
+
+
 
 
 #Crea imagenes 
 class ImInter:
 
-  def __init__(self, frame,objeto,relx,rely,bg=True):
+  def __init__(self, frame,objeto,relx,rely,bg=True,anchor=None):
     self.frame = frame
+    self.anchor=anchor
     self.objeto = objeto
     self.relx = relx
     self.rely = rely
@@ -564,8 +657,11 @@ class ImInter:
     
   #muestra la imagen creada
   def show(self):
+    if (self.anchor==None):
 
-    self.panel.place(relx = self.relx,rely=self.rely,anchor = CENTER)
+      self.panel.place(relx = self.relx,rely=self.rely,anchor = CENTER)
+    else:
+      self.panel.place(relx = self.relx,rely=self.rely,anchor = self.anchor)
   #modifica el tamaño del
   def modzise(self,sizex=130,sizey=130):
     
@@ -630,15 +726,160 @@ class BottInter(ImInter):
 
     
     self.show()
+  def return_panel(self):
+    return self.panel
+
+# grevy
+class guardarVehiculo(info):
+  def __init__(self,idusuario=None, idvideo=None,velocidad=None,velocidad_excedida=None, captura=None, master=None, app=None):
+    self.captura_carro=captura
+    self.idusuario = idusuario
+    self.idvideo= idvideo
+    self.velocidad=velocidad
+    self.velocidad_excedida=velocidad_excedida
+
+    super().__init__(master,app)
+
+
+  def own_widgets(self):
+    #estos son como ejemplo
+    self.idusuario = 1
+    self.idvideo= 10
+    self.velocidad=40.5
+    self.velocidad_excedida=True
+
+    self.iminfo= ImInter(self.frame,"Video Speed Icon.png", 0.8,0.06) 
+    self.iminfo.sizeImage(70,110)
+    self.iminfo.create()
+
+    self.Text="Guardar Vehículo"
+    self.Title1 = textInter(self.frame,self.Text,30,0.5,0.23)
+    self.Title1.create_Tittle()
+    
+
+    self.Text="ID Video "
+    self.Title_id_video = textInter(self.frame,self.Text,16,0.15,0.3,'w')
+    self.Title_id_video.create_Tittle()
+    self.id_video= IntVar(self.frame, value=self.idvideo)
+    self.entrada_vehiculo = Entry(self.frame,textvariable=self.id_video,width=10,
+     font = ('comics Sans MS',18))
+    self.entrada_vehiculo.place(relx = 0.34,rely=0.3,anchor ='w')
+
+    
+    self.Text="Captura:"
+    self.Title_captura = textInter(self.frame,self.Text,16,0.6,0.3,'w')
+    self.Title_captura.create_Tittle()
+
+    self.mostrar_captura= ImInter(self.frame,"captura.png", 0.7,0.45)
+    self.mostrar_captura.create()
+
+    self.Text="Tipo de Vehículo:"
+    self.Title_tipo_vehiculo = textInter(self.frame,self.Text,16,0.15,0.38,'w')
+    self.Title_tipo_vehiculo.create_Tittle()
+    self.tipo_vehiculo= StringVar()
+    self.entrada_tipo_video = Entry(self.frame,textvariable=self.tipo_vehiculo,width=10, font = ('comics Sans MS',18))
+    self.entrada_tipo_video.place(relx = 0.34,rely=0.38,anchor ='w')
+
+    self.Text="PLACA:"
+    self.Title_placa = textInter(self.frame,self.Text,16,0.15,0.45,'w')
+    self.Title_placa.create_Tittle()
+    self.placa= DoubleVar(self.frame,value=self.velocidad)
+    self.entrada_placas = Entry(self.frame,textvariable=self.placa,width=10, font = ('comics Sans MS',18))
+    self.entrada_placas.place(relx = 0.34,rely=0.45,anchor ='w')
+
+    self.Text="Velocidad (km/h):"
+    self.Title_velocidad = textInter(self.frame,self.Text,16,0.15,0.53,'w')
+    self.Title_velocidad.create_Tittle()
+    if self.velocidad_excedida:
+      self.velocidad= StringVar(self.frame,value="Sí")
+    else:
+      self.velocidad= StringVar(self.frame,value="No")
+    self.entrada_velocidad = Entry(self.frame,textvariable=self.velocidad,width=10, font = ('comics Sans MS',18))
+    self.entrada_velocidad.place(relx = 0.34,rely=0.53,anchor ='w')
+
+
+    self.Text="Vía:"
+    self.Title_via = textInter(self.frame,self.Text,16,0.15,0.61,'w')
+    self.Title_via.create_Tittle()
+    self.via= StringVar()
+
+    self.opciones_vias = ttk.Combobox(self.frame, width=10, font = ('comics Sans MS',18),textvariable = self.via)
+    self.opciones_vias['value'] = vias
+    self.opciones_vias.place(relx = 0.34,rely=0.61,anchor ='w')
+    self.opciones_vias.current(0) 
+
+    self.Text="Velocidad Excedida:"
+    self.Title_velocidad_excedida = textInter(self.frame,self.Text,16,0.15,0.69,'w')
+    self.Title_velocidad_excedida.create_Tittle()
+    self.velocidad_excedida= StringVar()
+    self.entrada_velocidad_excedida = Entry(self.frame,textvariable=self.velocidad_excedida,width=10, font = ('comics Sans MS',18))
+    self.entrada_velocidad_excedida.place(relx = 0.34,rely=0.69,anchor ='w')
+    
+    self.Text="Multa:"
+    self.Title_multa = textInter(self.frame,self.Text,16,0.6,0.61,'w')
+    self.Title_multa.create_Tittle()
+    self.multa= StringVar()
+    self.entrada_multa = Entry(self.frame,textvariable=self.multa,width=10, font = ('comics Sans MS',18))
+    self.entrada_multa.place(relx = 0.71,rely=0.61,anchor ='w')
+
+
+    self.Text="ID Usuario:"
+    self.Title_id_usuario = textInter(self.frame,self.Text,16,0.6,0.69,'w')
+    self.Title_id_usuario.create_Tittle()
+    self.id_usuario= IntVar(self.frame, value=self.idusuario)
+    self.entrada_id_usuario = Entry(self.frame,textvariable=self.id_usuario,width=10, font = ('comics Sans MS',18))
+    self.entrada_id_usuario.place(relx = 0.71,rely=0.69,anchor ='w')
+
+
+    self.Button_guardar = BottInter(self.frame,"Boton_guardar.png",0.5,0.8,None, self.make_guardar_vehiculo)
+    self.Button_guardar.modzise(250,60)
+    self.Button_guardar.create()
+
+    self.canvas = Canvas(self.frame,bg="white",width=3,height=370,relief=FLAT)
+    self.canvas.create_line(1.5, 0, 1.5, 370)
+    self.canvas.place(relx = 0.5,rely=0.5,anchor = CENTER)
+  
+
+
+  def make_guardar_vehiculo(self):
+    if (self.vehiculo.get()!="" and self.placas.get()!="" and self.velocidad.get()!="" and self.via.get()!="" and self.limite_velocidad.get()!=""):
+      print(self.vehiculo.get())
+      #self.page_agrega = guardarVehiculo(master=self.master, app=self)
+      #self.frame.pack_forget()
+      #self.page_agregar_vehiculo.start_page()
+    else:
+      self.mensaje()
+    
+  
+  def mensaje(self):
+    MessageBox.showinfo("Información","Por favor, rellene todas las casillas.")
+    
+  def go_back(self):
+    global ac
+    ac=False
+    self.frame.pack_forget()
+    self.go_back = self.app.start_page()
+
+  def Open_menu(self,event=None):
+    global ac
+    self.name="video"
+
+    if (ac== False):
+
+      self.Menu = menu(self.name,root=self.frame, app=self)    
+      self.Menu.start_page()
+      ac=True
+
 
 class textInter(ImInter):
 
-  def __init__(self, frame,texto,size,relx,rely):
+  def __init__(self, frame,texto,size,relx,rely,anchor=None):
     self.frame = frame
     self.texto = texto
     self.relx = relx
     self.rely = rely
     self.size=size
+    self.anchor=anchor
   def create_Tittle(self):
     self.panel=Label(self.frame, text = self.texto,bg= 'white',font=('Helvetica', self.size, 'bold'))
     self.show()
@@ -648,10 +889,11 @@ class textInter(ImInter):
 
 
 class VidInter(ImInter):
-  def __init__(self, frame,objeto,x,y,canvas,variable):
+  def __init__(self, frame,objeto,x,y,canvas,variable,app=None):
 
     self.frame = frame
     self.objeto = objeto
+    self.app=app
     self.y = y
     self.x = x
     self.variable = variable
@@ -661,7 +903,6 @@ class VidInter(ImInter):
   
   def create_label(self):
     self.panel = Label(self.canvas)
-    
     
   
   def show(self):
@@ -724,6 +965,7 @@ class history(info):
     self.scrollbar = Scrollbar(self.canvas,bg='white')
     self.scrollbar.place(relx = 0.99,rely=0.5,anchor = CENTER, relheight=1)
 
+    
     self.y = 0
     self.x = 0
     self.contador=0
@@ -739,12 +981,21 @@ class history(info):
         self.ciudad = History_Videos[x][3]
         self.direccion = History_Videos[x][4]
         self.fecha = History_Videos[x][5]
-        globals()["video" + str(self.contador)] = VidInter(self.frame,self.name_video,self.x,self.y,self.canvas,self.contador)
+
+        globals()["video" + str(self.contador)] = VidInter(self.frame,self.name_video,self.x,self.y,self.canvas,self.contador,self)
         
+        globals()["button_detection" + str(self.contador)]= BottInter(self.canvas,"Video Speed Icon.png",0.5,0.8,'',partial(self.make_page_detection,self.name_video))
+        globals()["button_detection" + str(x)].modzise(95,50)
+        globals()["button_detection" + str(x)].create()
+        self.window= globals()["button_detection" + str(x)].return_panel()
+
         self.text= self.via+" - "+self.ciudad + " - " + self.fecha
         self.canvas.create_text(self.x+160,self.y+230,font=('Helvetica', 11, 'bold'), text=self.text)
-        
         self.canvas.create_text(self.x+50,self.y+250,font=('Helvetica', 11), text=self.direccion)
+
+        
+        self.canvas.create_window(self.x+390,self.y+245, window=self.window, anchor=CENTER)
+
         
         if (self.x==0):
           self.x=500
@@ -753,26 +1004,21 @@ class history(info):
         self.contador+=1
         if (self.contador % 2 ==0):
           self.y+=300
-        
+    self.create_video() 
+    
         
     
-    self.create_video()
 
     self.canvas.config(yscrollcommand=self.scrollbar.set, scrollregion = self.canvas.bbox("all"))
     
     self.scrollbar.configure(command= self.canvas.yview )
-    self.canvas.bind('<Enter>', self._bind_to_mousewheel)
-    self.canvas.bind('<Leave>', self._unbind_from_mousewheel)
 
-  
-  def _on_mousewheel(self,event):
-    self.canvas.yview_scroll(int(-1*(event.delta/120)), "units")
-
-  def _bind_to_mousewheel(self,event):
-    self.canvas.bind_all("<MouseWheel>", self._on_mousewheel)      
-
-  def _unbind_from_mousewheel(self,event):
-    self.canvas.unbind_all("<MouseWheel>")
+  def make_page_detection(self,name_video):
+    self.name_video_detection= name_video
+    self.page_detection = detection(self.name_video_detection, master=self.master, app=self)
+    self.frame.pack_forget()
+    self.page_detection.start_page()
+    
   
   def create_video(self):
      for x in range(len(History_Videos)):
@@ -782,19 +1028,17 @@ class history(info):
         globals()["video" + str(x)].show()
         globals()["video" + str(x)].create()
         globals()["video" + str(x)].action()
+        
+
 
   def Open_menu(self,event=None):
     global ac
     self.name="history"
+    self.Menu = menu(self.name,root=self.frame, app=self, additional=self.canvas)
     if (ac== False):
-
-      self.Menu = menu(self.name,root=self.frame, app=self, additional=self.canvas)
     
       self.Menu.start_page()
       ac=True
-
-class Lista(object):
-  pass
 
 #Datos
 
@@ -850,7 +1094,7 @@ if __name__ == '__main__':
                     (1,"/home/runner/POO/video2.mp4","CARRETERA","Bogotá D.C","km 7 - Tunja","13/10/2021"),
                     (1,"/home/runner/POO/video2.mp4","CARRETERA","Bogotá D.C","km 7 - Tunja","14/10/2021"),
                     ]
-  
+  vias= ["Autopista/Carretera", "Arterias", "Principales", "Locales y Especiales"]
   
   app = App(root)
   root.mainloop()
