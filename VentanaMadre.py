@@ -22,7 +22,7 @@ class VentanaMadre():
         "POLICIA":'POLICIA NACIONAL',
         "ESCUDOPOLICIA":'RecursosGraficos\\\ESCUDOPOLICIA.png',
         "PAIS":'REPÚBLICA DE COLOMBIA',
-        "BANDERAPAIS":'SRecursosGraficos\\\BANDERAPAIS.png',
+        "BANDERAPAIS":'RecursosGraficos\\\BANDERAPAIS.png',
         "INFORMACION":'RecursosGraficos\\\INFORMACION.png',
         "ACTUALIZARDATOS":'RecursosGraficos\\\ACTUALIZARDATOS.png',
         "REGISTRARVIDEOS":'RecursosGraficos\\\REGISTRARVIDEOS.png',
@@ -57,16 +57,16 @@ class VentanaMadre():
     def crearLogoSlow(self):
         self.logoSlowImg = PhotoImage(file=self.recursosGraficos["LOGOSLOW"])
         self.logoSlowImg = self.logoSlowImg.subsample(2)
-        self.logoSlow = Label(self.base, image=self.logoSlowImg, bg="white").place(x=(self.ancho-self.logoSlowImg.width())/2, y=10)
+        self.logoSlow = Label(self.base, image=self.logoSlowImg, bg="white").place(relx=0.409,rely=0.01)
 
     def crearLogoEscudoPolicia(self):
         self.logoEscudoPoliciaImg = PhotoImage(file=self.recursosGraficos["ESCUDOPOLICIA"])
         self.logoEscudoPoliciaImg = self.logoEscudoPoliciaImg.subsample(16)
-        self.logoEscudoPolicia = Label(self.base, image=self.logoEscudoPoliciaImg, bg="white").place(x=(self.ancho-1520)/2, y=10)
-        self.policiaNacional = Label(self.base, text="POLICIA NACIONAL", bg="white").place(x=(self.ancho-1545)/2, y=90)
+        self.logoEscudoPolicia = Label(self.base, image=self.logoEscudoPoliciaImg, bg="white").place(relx=0.025, rely=0.0125)
+        self.policiaNacional = Label(self.base, text="POLICIA NACIONAL", bg="white").place(relx=0.0171, rely=0.1125)
 
     def crearLogoPais(self):
         self.paisImg = PhotoImage(file=self.recursosGraficos["BANDERAPAIS"])
         self.paisImg  = self.paisImg.subsample(9)
-        self.pais = Label(self.base, image=self.paisImg , bg="white").place(x=self.ancho/2+650, y=20)
-        self.paisText = Label(self.base, text="REPÚBLICA DE COLOMBIA", bg="white").place(x=self.ancho/2+625, y=90)
+        self.pais = Label(self.base, image=self.paisImg , bg="white").place(relx=0.906, rely=0.025)
+        self.paisText = Label(self.base, text="REPÚBLICA DE COLOMBIA", bg="white").place(relx=0.89, rely=0.1125)

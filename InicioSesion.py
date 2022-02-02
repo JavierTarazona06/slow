@@ -17,15 +17,15 @@ class VentanaInicioSesion(VentanaMadre.VentanaMadre):
 
     def crearLogoSlow(self):
         self.logoSlowImg = PhotoImage(file=self.recursosGraficos["LOGOSLOW"])
-        self.logoSlow = Label(self.base, image=self.logoSlowImg, bg="white").place(x=(self.ancho-self.logoSlowImg.width())/2, y=80)
+        self.logoSlow = Label(self.base, image=self.logoSlowImg, bg="white").place(relx=0.324, rely=0.1)
 
     def crearElementos(self):
         self.avatarImg = PhotoImage(file=self.recursosGraficos["AVATAR"])
         self.avatarImg = self.avatarImg.subsample(15)
-        self.avatar = Label(self.base, image=self.avatarImg, bg="white").place(x=(self.ancho-300)/2, y=100+self.logoSlowImg.height())
+        self.avatar = Label(self.base, image=self.avatarImg, bg="white").place(relx=0.406, rely=0.42)
 
         self.usuarioEntrada = Entry(self.base,bg="white",fg="grey", justify="left", font=(30), width=25, border=3)
-        self.usuarioEntrada.place(x=(self.ancho-200)/2, y=110+self.logoSlowImg.height())
+        self.usuarioEntrada.place(relx=0.4375, rely=0.43)
         self.usuarioEntrada.insert(0,'Usuario')
         self.usuarioEntrada.bind("<FocusIn>",self.defaultUsuario)
         self.usuarioEntrada.bind("<FocusOut>",self.defaultUsuario)
@@ -33,10 +33,10 @@ class VentanaInicioSesion(VentanaMadre.VentanaMadre):
 
         self.candadoImg = PhotoImage(file=self.recursosGraficos["CANDADO"])
         self.candadoImg = self.candadoImg.subsample(15)
-        self.candado = Label(self.base, image=self.candadoImg, bg="white").place(x=(self.ancho-300)/2, y=160+self.logoSlowImg.height())
+        self.candado = Label(self.base, image=self.candadoImg, bg="white").place(relx=0.406, rely=0.485)
 
         self.contrasenaEntrada = Entry(self.base,bg="white",fg="grey", justify="left", font=(30), width=25, border=3)
-        self.contrasenaEntrada.place(x=(self.ancho-200)/2, y=170+self.logoSlowImg.height())
+        self.contrasenaEntrada.place(relx=0.4375, rely=0.495)
         self.contrasenaEntrada.insert(0,'Contraseña')
         self.contrasenaEntrada.bind("<FocusIn>",self.defaultContrasena)
         self.contrasenaEntrada.bind("<FocusOut>",self.defaultContrasena)
@@ -45,23 +45,23 @@ class VentanaInicioSesion(VentanaMadre.VentanaMadre):
         self.ojoClaveAbiertoImg = PhotoImage(file=self.recursosGraficos["OJOCLAVEABIERTO"])
         self.ojoClaveAbiertoImg = self.ojoClaveAbiertoImg.subsample(15)
         self.ojoClaveBoton = Button(self.base, image=self.ojoClaveAbiertoImg, command=self.abrirOjo,bg="white", border=1, relief="raised", cursor="hand2", bd=0)
-        self.ojoClaveBoton.place(x=(self.ancho)/2+140, y=160+self.logoSlowImg.height())
+        self.ojoClaveBoton.place(relx=0.5875, rely=0.49)
         self.ojoClaveBoton.bind("<Enter>",self.enOjoClaveBoton)
         self.ojoClaveBoton.bind("<Leave>",self.fueraOjoClaveBoton)
 
         self.iniciarSesionBoton = Button(self.base,text="Iniciar Sesión",bg="black",fg="white", cursor="hand2", font=(40), command=self.iniciarSesion, bd=4)
-        self.iniciarSesionBoton.place(x=(self.ancho-100)/2, y=250+self.logoSlowImg.height())
+        self.iniciarSesionBoton.place(relx=0.46875, rely=0.585)
         self.iniciarSesionBoton.bind("<Enter>",self.enBotonIniciarSesion)
         self.iniciarSesionBoton.bind("<Leave>",self.fueraBotonIniciarSesion)
 
         self.crearCuentaBoton = Button(self.base,text="Crear Cuenta",bg="black",fg="white", cursor="hand2" ,font=(40), bd=4, command=self.crearCuenta)
-        self.crearCuentaBoton.place(x=(self.ancho-100)/2, y=315+self.logoSlowImg.height())
+        self.crearCuentaBoton.place(relx=0.468, rely=0.654)
         self.crearCuentaBoton.bind("<Enter>",self.enBotoCrearCuenta)
         self.crearCuentaBoton.bind("<Leave>",self.fueraBotoCrearCuenta)
 
-        self.firmaUniversidad = Label(self.base, text="Universidad Nacional De Colombia", bg="white", font=(25)).place(x=(self.ancho-230)/2, y=425+self.logoSlowImg.height())
-        self.firmaPOO = Label(self.base, text="Proyecto Programación Orientada a Objetos", bg="white", font=(25)).place(x=(self.ancho-300)/2, y=450+self.logoSlowImg.height())
-        self.firmaAno = Label(self.base, text="2021", bg="white", font=(25)).place(x=(self.ancho-30)/2, y=475+self.logoSlowImg.height())
+        self.firmaUniversidad = Label(self.base, text="Universidad Nacional De Colombia", bg="white", font=(25)).place(relx=0.428125, rely=0.775)
+        self.firmaPOO = Label(self.base, text="Proyecto Programación Orientada a Objetos", bg="white", font=(25)).place(relx=0.40625, rely=0.805)
+        self.firmaAno = Label(self.base, text="2021", bg="white", font=(25)).place(relx=0.49,rely=0.835)
 
     def defaultUsuario(self,event):
         texto = self.usuarioEntrada.get()
