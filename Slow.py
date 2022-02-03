@@ -838,6 +838,8 @@ class Vias(info):
     self.police.sizeImage(100,100)
     self.police.create()
 
+    self.canvas.create_text(160,230,font=('Helvetica', 11, 'bold'), text="vid1")
+
 #    self.Autopista = ImInter(self.frame,"Autopista.png", 0.15,0.37) 
 #    self.Autopista.sizeImage(90,240)
 #    self.Autopista.create()
@@ -1057,6 +1059,10 @@ class Graficas2(Graficas):
 
 class tablaGraficas(info):
   pass
+
+class CampoCanvas():
+  def __init__(self):
+      pass
 
 #Crea imagenes 
 class ImInter:
@@ -1526,3 +1532,5 @@ def elUsuario(usuario):
   tomarInfoUsuario()
   app = App(root)
   root.mainloop()
+
+elUsuario(4)

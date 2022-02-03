@@ -194,3 +194,4 @@ main()
   #          'CRA 60 NO. 4725 BRR. MARAVILLA CASA 2',3333333333,'prueba@prueba.com','CLARO'
   #      )''')
 #conexionSlow.cerrarBaseDeDatosSlow()
+'''SELECT IDVEHICULO,IDVIDEO,VELOCIDAD FROM VEHICULOS WHERE IDUSUARIO=N'''
