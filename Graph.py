@@ -12,16 +12,46 @@ class Graph:
 #         self.alto = self.ventana.winfo_screenheight()
     
     
-    def __init__(self,ventana):
-        #Toca pasar como parametro la ventana a la cual va a pertenecer 
-        self.ventana=ventana
-        self.ancho = self.ventana.winfo_screenwidth()
-        self.alto = self.ventana.winfo_screenheight()
+    def __init__(self, *args):
+        #Toma argumentos que puede ser la base de datos o la base de datos y un objeto de tipo grafica anterior
+        if(len(args)==0):
+            self.mainConstructor()
+        else: self.ongoingConstructor(args)
+        
+    def mainConstructor(self):
+        #Si no hay argumentos crea todo desde cero
+        self.ventana=tk.Tk()
+        self.ventana.resizable(False,False)
+        self.ventana.title("SLOW - Graficas y Datos")
+
+        self.ancho = int(self.ventana.winfo_screenwidth()/1.5)
+        self.alto = int(self.ventana.winfo_screenheight()/1.5)
+        
+        self.ventana.geometry("{0}x{1}".format(self.ancho,self.alto))
         self.DURACION= 100
         self.carros=[] # Aquí se guarda el carro mientras se da la instrucción de graficar
         
         self.construirFrames()
-   
+        
+    def ongoingConstructor(self, args):
+        #Si hay argumentos agrega los vehículos ya creados y establece el tamaño de ventana facilmente
+        self.ventana=tk.Tk()
+        self.ventana.resizable(False,False)
+        self.ventana.title("SLOW - Graficas y Datos")
+        
+        self.ancho = args[0].ancho
+        self.alto = args[0].alto
+        
+        self.ventana.geometry("{0}x{1}".format(self.ancho,self.alto))
+        self.DURACION= 100
+        self.carros= args[0].carros
+        
+        self.construirFrames()
+        
+        #Finalmente añade los datos de la tabla anterior a la nueva tabla luego de creada
+        for datos in self.carros:
+            self.tabla.insert('',tk.END,values=(datos[0],datos[1],datos[2]))
+        
     def construirFrames(self):
         #Base Para Grafica, Botones y Tabla------------
         self.frame1 = tk.Frame(self.ventana, background="white")
@@ -36,7 +66,7 @@ class Graph:
     
     def crearGrafico(self):
         #Crea el grafico con un unico subplot----------------
-        self.grafica = Figure(figsize=((self.ancho*0.65/100),(self.alto/140)),dpi=100)
+        self.grafica = Figure(figsize=((self.ancho*0.65/100),(self.alto/133)),dpi=100)
         self.area_dibujo = self.grafica.add_subplot(1,1,1)
     
         self.grafica.suptitle('Velocidades de Vehiculos')
@@ -49,21 +79,21 @@ class Graph:
         tipo_tabla.map("Treeview", background=[("selected", "#76909c")])
         
         #Añade Tabla y boton al frame2-------------        
-        self.tabla = ttk.Treeview(self.frame2, columns=("#1","#2","#3"), height=int(self.alto/22.995))
+        self.tabla = ttk.Treeview(self.frame2, columns=("#1","#2","#3"), height=int(self.alto/22))
         self.tabla.pack(side = tk.TOP)
         self.tabla.heading("#1", text= "IdCarro")
-        self.tabla.column("#1", width=int(self.ancho*0.185/3), anchor="center")
+        self.tabla.column("#1", width=int(self.ancho*0.19/3), anchor="center")
         self.tabla.heading("#2", text= "Velocidad")
-        self.tabla.column("#2", width=int(self.ancho*0.185/3), anchor="center")
+        self.tabla.column("#2", width=int(self.ancho*0.19/3), anchor="center")
         self.tabla.heading("#3", text= "Infractor")
-        self.tabla.column("#3", width=int(self.ancho*0.185/3), anchor="center")
+        self.tabla.column("#3", width=int(self.ancho*0.19/3), anchor="center")
         
-        self.boton2= tk.Button(self.frame2, text="Retroceder", command= self.ocultarGraficos).pack(side = tk.TOP)
+        self.boton2= tk.Button(self.frame2, text="Retroceder", command= self.ventana.destroy).pack(side = tk.TOP)
         
     def guardarCarros(self,datos):
         #Recibe una lista de datos [ID,Velocidad,Infractor]
         #Guarda los datos del carro para luego graficarlos y los añade a la tabla----------
-        self.carros.append([datos[0],datos[1]])
+        self.carros.append([datos[0],datos[1],datos[2]])
         self.tabla.insert('',tk.END,values=(datos[0],datos[1],datos[2]))
             
         #Añadir Funcion para Guardar a la base de datos el carro infractor///
@@ -86,6 +116,8 @@ class Graph:
         barratareas = NavigationToolbar2Tk(canvas,self.frame1)
         barratareas.update()
         canvas._tkcanvas.pack(side=tk.TOP)
+        
+        self.ventana.mainloop()
     
     def graficar(self):
         #Grafica todos los carros guardados hasta ahora con una distancia entre datos fija-------
@@ -95,7 +127,3 @@ class Graph:
             col = "#%06x" % random.randint(0, 0xFFFFFF)
             self.area_dibujo.plot([0,self.DURACION],[self.carros[i][1],self.carros[i][1]], color=col)
             self.area_dibujo.text((i+1)*distancia,(self.carros[i][1]-0.5),self.carros[i][0], fontsize="small")
-    
-    def ocultarGraficos(self):
-        self.frame1.grid_forget()
-        self.frame2.grid_forget()
