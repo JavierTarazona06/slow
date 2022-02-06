@@ -5,12 +5,6 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
 
 class Graph:
-    #Elementos de la carpeta de archivos, por si se tiene que implementar uncommentar el import
-#     self.ventana = Tk()
-# 
-#         self.ancho = self.ventana.winfo_screenwidth()
-#         self.alto = self.ventana.winfo_screenheight()
-    
     
     def __init__(self, *args):
         #Toma argumentos que puede ser la base de datos o la base de datos y un objeto de tipo grafica anterior
