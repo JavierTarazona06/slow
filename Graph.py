@@ -11,10 +11,14 @@ class Graph:
         #o un objeto de tipo grafica anterior para seguir graficando con datos anteriores
         if(len(args)==1):
             self.ongoingConstructor(args)
-        else:self.mainConstructor()
+        else:self.mainConstructor(args)
         
-    def mainConstructor(self):
+    def mainConstructor(self,args):
         #Si no hay argumentos crea todo desde cero
+        self.idvideo=args[0]
+        self.idvia=args[1]
+        self.multa=args[2]
+        
         self.ventana=tk.Tk()
         self.ventana.resizable(False,False)
         self.ventana.title("SLOW - Graficas y Datos")
@@ -30,6 +34,10 @@ class Graph:
         
     def ongoingConstructor(self, args):
         #Si hay argumentos agrega los vehículos ya creados y establece el tamaño de ventana facilmente
+        self.idvideo=args[0].idvideo
+        self.idvia=args[0].idvia
+        self.multa=args[0].multa
+        
         self.ventana=tk.Tk()
         self.ventana.resizable(False,False)
         self.ventana.title("SLOW - Graficas y Datos")
@@ -92,6 +100,8 @@ class Graph:
         self.tabla.insert('',tk.END,values=(datos[0],datos[1],datos[2]))
             
         #Añadir Funcion para Guardar a la base de datos el carro infractor///
+        
+        #El idvideo,idvia,multa ya están creados en el objeto
         
         #////
 
