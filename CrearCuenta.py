@@ -6,7 +6,7 @@ import ConexionBaseDeDatosSlow as bD
 from tkinter import filedialog
 import Imagenes
 from tkinter import messagebox
-import re
+from PIL import Image,ImageTk
 
 class VentanaRegistro(VentanaMadre.VentanaMadre):
     
@@ -327,15 +327,16 @@ class VentanaRegistro(VentanaMadre.VentanaMadre):
                 policiasAsignados = "0"
                 self.policiasAsignadosDisplay.set("0")
             listaPoliciasAsignados = policiasAsignados.split(sep=",")
-            for i in listaPoliciasAsignados:
-                try:
-                    idPolicia = int(i)
-                except ValueError:
-                    return messagebox.showerror(messageBoxTit,"Recuerde ingresar solo los ID válidos de Slow para\nlos policías asignados separados por comas")
-                conexionSlow.cursorSlow.execute(f"SELECT IDUSUARIO FROM USUARIOS WHERE IDUSUARIO='{idPolicia}' AND ROL='POLICIA'")
-                policiaEncontrado = conexionSlow.cursorSlow.fetchall()
-                if len(policiaEncontrado)==0:
-                    return messagebox.showerror(messageBoxTit, f"No existe el ID del policía {idPolicia}. Ingresar uno existente o crear uno nuevo")
+            if (not listaPoliciasAsignados[0]=="0") and len(listaPoliciasAsignados)==1:
+                for i in listaPoliciasAsignados:
+                    try:
+                        idPolicia = int(i)
+                    except ValueError:
+                        return messagebox.showerror(messageBoxTit,"Recuerde ingresar solo los ID válidos de Slow para\nlos policías asignados separados por comas")
+                    conexionSlow.cursorSlow.execute(f"SELECT IDUSUARIO FROM USUARIOS WHERE IDUSUARIO='{idPolicia}' AND ROL='POLICIA'")
+                    policiaEncontrado = conexionSlow.cursorSlow.fetchall()
+                    if len(policiaEncontrado)==0:
+                        return messagebox.showerror(messageBoxTit, f"No existe el ID del policía {idPolicia}. Ingresar uno existente o crear uno nuevo")
         else:
             idJefe = str(self.jefeDisplay.get())
             if idJefe == "":

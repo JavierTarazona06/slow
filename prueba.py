@@ -1,4 +1,7 @@
 from tkinter import *
+from PIL import Image,ImageTk
+import tkinter as tk
+import tkinter.filedialog as fd
 
 def ej1():
     root = Tk()
@@ -49,4 +52,57 @@ def ej2():
 
     mainloop()
 
-ej2()
+def ej3():
+    #Import the required Libraries
+
+
+    #Create an instance of tkinter frame
+    win = Tk()
+
+    #Set the geometry of tkinter frame
+    win.geometry("750x270")
+
+    #Create a canvas
+    canvas= Canvas(win, width= 600, height= 400)
+    canvas.pack()
+
+    #Load an image in the script
+    img= (Image.open("Boton.png"))
+
+    #Resize the Image using resize method
+    resized_image= img.resize((150,150), Image.ANTIALIAS)
+    new_image= ImageTk.PhotoImage(resized_image)
+
+    #Add image to the Canvas Items
+    canvas.create_image(100,10, anchor=NW, image=new_image)
+
+    win.mainloop()
+
+def ej4():
+    from PIL import ImageTk, Image
+
+
+    root = tk.Tk()
+
+    pic = fd.askopenfilename()
+
+    img = Image.open(pic)
+
+    o_size = img.size   #Tamaño original de la imagen
+    f_size = (400, 400) #Tamaño del canvas donde se mostrará la imagen
+
+
+    factor = min(float(f_size[1])/o_size[1], float(f_size[0])/o_size[0])
+    width = int(o_size[0] * factor)
+    height = int(o_size[1] * factor)
+
+    rImg= img.resize((width, height), Image.ANTIALIAS)
+    rImg = ImageTk.PhotoImage(rImg)
+    print(rImg)
+    canvas = tk.Canvas(root, width=f_size[0], height= f_size[1])
+    canvas.create_image(f_size[0]/2, f_size[1]/2, anchor=tk.CENTER, image=rImg, tags="img")
+    canvas.pack(fill=None, expand=False)
+
+    root.mainloop()
+
+ej4()

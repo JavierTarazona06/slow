@@ -13,32 +13,6 @@ class ConexionBaseDeDatosSlow():
     '''
     def __init__(self):
         self.abrirBasedeDatosSlow()
-        self.recursosGraficos = {"LOGOSLOWICO":"RecursosGraficos\\\Logo_Slow_Icon_Map.ico",
-        "LOGOSLOW":'RecursosGraficos\\\Logo_Slow.png',
-        "DEVOLVER":'RecursosGraficos\\\DEVOLVER.png',
-        "MENU":'RecursosGraficos\\\MENU.png',
-        "RECARGAR":'RecursosGraficos\\\RECARGAR.png',
-        "ELIMINAR":'RecursosGraficos\\\ELIMINAR.png',
-        "MULTA":'RecursosGraficos\\\MULTA.png',
-        "AVATAR":'RecursosGraficos\\\AVATAR.png',
-        "CANDADO":'RecursosGraficos\\\CANDADO.png',
-        "OJOCLAVECERRADO":'RecursosGraficos\\\OJOCLAVECERRADO.png',
-        "OJOCLAVEABIERTO":'RecursosGraficos\\\OJOCLAVEABIERTO.png',
-        "TARJETADOCUMENTO":'RecursosGraficos\\\TARJETADOCUMENTO.png',
-        "CORREO":'RecursosGraficos\\\CORREO.png',
-        "ROL":'RecursosGraficos\\\ROL.png',
-        "CLAVE":'RecursosGraficos\\\CLAVE.png',
-        "POLICIA":'POLICIA NACIONAL',
-        "ESCUDOPOLICIA":'RecursosGraficos\\\ESCUDOPOLICIA.png',
-        "PAIS":'REPÚBLICA DE COLOMBIA',
-        "BANDERAPAIS":'RecursosGraficos\\\BANDERAPAIS.png',
-        "INFORMACION":'RecursosGraficos\\\INFORMACION.png',
-        "ACTUALIZARDATOS":'RecursosGraficos\\\ACTUALIZARDATOS.png',
-        "REGISTRARVIDEOS":'RecursosGraficos\\\REGISTRARVIDEOS.png',
-        "VEHICULOSVIAS":'RecursosGraficos\\\VEHICULOSVIAS.png',
-        "HISTORICO":'RecursosGraficos\\\HISTORICO.png',
-        "PERFILDEFECTO":'RecursosGraficos\\\PERFILDEFECTO.png',
-        "VIADEFECTO":'RecursosGraficos\\\VIADEFECTO.png'}
         print("BD: Slow conectada")
 
     def abrirBasedeDatosSlow(self):
@@ -113,13 +87,11 @@ class ConexionBaseDeDatosSlow():
         self.cursorSlow.execute('''
         CREATE TABLE IF NOT EXISTS VIAS(
             IDVIA INT AUTO_INCREMENT,
-            VIA VARCHAR (200) UNIQUE,
+            VIA VARCHAR(200) UNIQUE,
             IMAGENVIA LONGBLOB,
             LIMITEVELOCIDAD FLOAT,
-            IDUSUARIO INT,
             MULTA FLOAT,
-            PRIMARY KEY (IDVIA),
-            CONSTRAINT FK_IDUSUARIO FOREIGN KEY (IDUSUARIO) REFERENCES USUARIOS (IDUSUARIO))
+            PRIMARY KEY (IDVIA))
         ''')
         self.reiniciarBaseDeDatosSlow()
 
@@ -130,7 +102,7 @@ class ConexionBaseDeDatosSlow():
                 IDVIDEO INT,
                 CAPTURA LONGBLOB,
                 TIPOVEHICULO VARCHAR (200),
-                PLACA VARCHAR (8) UNIQUE,
+                PLACA VARCHAR (8),
                 VELOCIDAD FLOAT,
                 IDVIA INT,
                 VELOCIDADEXCEDIDA BOOLEAN,
@@ -154,44 +126,13 @@ class ConexionBaseDeDatosSlow():
         self.cerrarBaseDeDatosSlow()
         self.abrirBasedeDatosSlow()
 
-    def prueba(self):
-        self.cursorSlow.execute('''
-        CREATE TABLE IF NOT EXISTS PRUEBA (
-            USUARIO INT AUTO_INCREMENT,
-            CLAVE LONGBLOB,
-            HOBBY VARCHAR (200) NOT NULL,
-            PRIMARY KEY (USUARIO)
-        )
-        ''')
-        self.reiniciarBaseDeDatosSlow()
-        #self.cursorSlow.execute("INSERT INTO PRUEBA (CLAVE,HOBBY) VALUES (aes_encrypt('tenis','clave'),'tenis')")
-        self.cursorSlow.execute("SELECT USUARIO, aes_decrypt(CLAVE,'clave'),HOBBY FROM PRUEBA")
-        lista = self.cursorSlow.fetchall()
-        for i in lista:
-            print(i)
-
 def main():
     conexionSlow = ConexionBaseDeDatosSlow()
     print(conexionSlow)
     conexionSlow.crearTablaUsuarios()
-    conexionSlow.crearTablaDeteccionYVideos()
     conexionSlow.crearTablaVias()
+    conexionSlow.crearTablaDeteccionYVideos()
     conexionSlow.crearTablaVehiculos()
     conexionSlow.cerrarBaseDeDatosSlow()
 
 main()
-
-#conexionSlow = ConexionBaseDeDatosSlow()
-#conexionSlow.cursorSlow.execute('''INSERT INTO USUARIOS (
-            #USUARIO,CLAVE,NOMBRE,APELLIDO,TIPODOCUMENTO,NUMERODOCUMENTO,
-#            IMAGENPERFIL,TIPOSANGRE,JEFE,POLICIASASIGNADOS,ASIGNACION,ROL,
-#            NUMEROCUADRANTE,CUADRANTE,CIUDAD,DEPARTAMENTO,HORARIO,ESTADO,
-#            DIRECCION,CELULAR,CORREO,FONDO
- #      ) VALUES (
-  #          'prueba',AES_ENCRYPT('prueba','clave'),'PRUEBA','PRUEBA','C.C',1,
-  #          'IMAGENPERFIL','O+','1','POLICIA PRUEBA 1, POLICIA PRUEBA 2','TRÁNSITO','POLICIA',
-  #          1,'CUADRANTE CENTRAL','BOGOTÁ','BOGOTÁ D.C','7:00 - 12:00 Y 14:00 A 18:000','ACTIVO',
-  #          'CRA 60 NO. 4725 BRR. MARAVILLA CASA 2',3333333333,'prueba@prueba.com','CLARO'
-  #      )''')
-#conexionSlow.cerrarBaseDeDatosSlow()
-'''SELECT IDVEHICULO,IDVIDEO,VELOCIDAD FROM VEHICULOS WHERE IDUSUARIO=N'''

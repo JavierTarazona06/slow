@@ -1,6 +1,5 @@
 from tkinter import *
 from tkinter import filedialog
-from tkinter import messagebox as MessageBox
 from tkinter import ttk
 from PIL import ImageTk, Image
 import cv2
@@ -243,6 +242,8 @@ class info:
     self.common_widgets()
     self.own_widgets()
     self.frame.pack()
+    global ac
+    ac=False
 
   def common_widgets(self):
   
@@ -636,10 +637,10 @@ class Date(info):
       return messagebox.showerror(messageBoxTit,messageBoxContent+"Número de Documento")
     else:
       try:
-        numeroDocumento = int(numeroDocumentoN)
+        numeroDocumentoN = int(numeroDocumentoN)
       except ValueError:
         return messagebox.showerror(messageBoxTit,"El Número de Documento debe ser un Número.")
-    if numeroDocumento <= 99999:
+    if numeroDocumentoN <= 99999:
       return messagebox.showerror(messageBoxTit,"El Número de Documento debe ser un Número mayor a 99999")
     conexionSlow.cursorSlow.execute(f"SELECT IDUSUARIO FROM USUARIOS WHERE NUMERODOCUMENTO='{numeroDocumento}' AND NOT IDUSUARIO={idUsuario}")
     numeroDocumentoEncontrado = conexionSlow.cursorSlow.fetchall()
@@ -663,15 +664,16 @@ class Date(info):
         policiasAsignadosN = "0"
         self.policiasAsignadosDisplay.set("0")
       listaPoliciasAsignadosN = policiasAsignadosN.split(sep=",")
-      for i in listaPoliciasAsignadosN:
-        try:
-          idPolicia = int(i)
-        except ValueError:
-          return messagebox.showerror(messageBoxTit,"Recuerde ingresar solo los ID válidos de Slow para\nlos policías asignados separados por comas")
-        conexionSlow.cursorSlow.execute(f"SELECT IDUSUARIO FROM USUARIOS WHERE IDUSUARIO='{idPolicia}' AND ROL='POLICIA'")
-        policiaEncontrado = conexionSlow.cursorSlow.fetchall()
-        if len(policiaEncontrado)==0:
-          return messagebox.showerror(messageBoxTit, f"No existe el ID del policía {idPolicia}. Ingresar uno existente o crear uno nuevo")
+      if (not listaPoliciasAsignadosN[0]=="0") and len(listaPoliciasAsignadosN)==1:
+        for i in listaPoliciasAsignadosN:
+          try:
+            idPoliciaN = int(i)
+          except ValueError:
+            return messagebox.showerror(messageBoxTit,"Recuerde ingresar solo los ID válidos de Slow para\nlos policías asignados separados por comas")
+          conexionSlow.cursorSlow.execute(f"SELECT IDUSUARIO FROM USUARIOS WHERE IDUSUARIO='{idPoliciaN}' AND ROL='POLICIA'")
+          policiaEncontrado = conexionSlow.cursorSlow.fetchall()
+          if len(policiaEncontrado)==0:
+            return messagebox.showerror(messageBoxTit, f"No existe el ID del policía {idPoliciaN}. Ingresar uno existente o crear uno nuevo")
     else:
       idJefeN = str(self.jefeDisplay.get())
       if idJefeN == "":
@@ -722,15 +724,15 @@ class Date(info):
       return messagebox.showerror(messageBoxTit,messageBoxContent+"Celular")
     else:
       try:
-        celular = int(celularN)
+        celularN = int(celularN)
       except ValueError:
         return messagebox.showerror(messageBoxTit,"El Número de Celular debe ser un Número.")
-      if celular <= 0:
+      if celularN <= 0:
         return messagebox.showerror(messageBoxTit,"El Número de Celular debe ser un Número mayor a 0.")
     correoN = str(self.correoEntrada.get())
     if correoN == "":
       return messagebox.showerror(messageBoxTit,messageBoxContent+"Correo")
-    if (correo.find("@policia.gov.co")==-1):
+    if (correoN.find("@policia.gov.co")==-1):
       return messagebox.showerror(messageBoxTit,"El correo electrónico debe terminar en @policia.gov.co")
     conexionSlow.cursorSlow.execute(f'''UPDATE USUARIOS SET
         USUARIO='{usuarioN}',NOMBRE='{nombreN}',APELLIDO='{apellidoN}',TIPODOCUMENTO='{tipoDocumentoN}',NUMERODOCUMENTO={numeroDocumentoN},
@@ -821,7 +823,7 @@ class Vias(info):
   def own_widgets(self):
 
     self.canvas = Canvas(self.frame, bg='white')
-    self.canvas.place(relx = 0.5,rely=0.58,anchor = CENTER, relheight=0.63,relwidth=0.7)
+    self.canvas.place(relx = 0.5,rely=0.58,anchor = CENTER, relheight=0.5,relwidth=0.7)
 
     self.scrollbar = Scrollbar(self.canvas,bg='white')
     self.scrollbar.place(relx = 0.99,rely=0.5,anchor = CENTER, relheight=1)
@@ -838,9 +840,92 @@ class Vias(info):
     self.police.sizeImage(100,100)
     self.police.create()
 
-    self.canvas.create_text(160,230,font=('Helvetica', 11, 'bold'), text="vid1")
+    self.xDCV_C1 = 94.48
+    self.xDCV_C2 = 280
+    self.xDCV_C3 = 510
+    self.xDCV_C4 = 750
+    self.xDCV_C5 = 982.67
+    self.yDCV = 50
+    self.crearTextoDentroCanvas(self.xDCV_C1,self.yDCV,"ID VIA",'bold')
+    self.crearTextoDentroCanvas(self.xDCV_C2,self.yDCV,"NOMBRE VIA",'bold')
+    self.crearTextoDentroCanvas(self.xDCV_C3,self.yDCV,"IMAGEN VIA",'bold')
+    self.crearTextoDentroCanvas(self.xDCV_C4,self.yDCV,"LIMITE VELOCIDAD",'bold')
+    self.crearTextoDentroCanvas(self.xDCV_C5,self.yDCV,"MULTA",'bold')
 
-#    self.Autopista = ImInter(self.frame,"Autopista.png", 0.15,0.37) 
+    self.llamarVias()
+
+    self.BottVehiculos = BottInter(self.frame,"Vehiculos.png",0.7,0.25, None,self.go_vehiculos)
+    self.BottVehiculos.modzise(130,70)
+    self.BottVehiculos.create()
+
+    self.Button_crear_editar_via = BottInter(self.frame,"Crear_Editar_Via.png",0.85,0.8,None, self.make_agregar_editar_via)
+    self.Button_crear_editar_via.modzise(130,70)
+    self.Button_crear_editar_via.create()
+
+    self.canvas.config(yscrollcommand=self.scrollbar.set, scrollregion = self.canvas.bbox("all"))
+    self.scrollbar.configure(command= self.canvas.yview )
+
+  def make_agregar_editar_via(self):
+    self.page_agregar_crear_via = guardarVia(master=self.master, app=self)
+    self.frame.pack_forget()
+    self.page_agregar_crear_via.start_page()
+
+  def crearTextoDentroCanvas(self,x,y,text,bold="",font=11):
+    self.canvas.create_text(x,y,font=('Helvetica', font, f'{bold}'), text=f"{text}")
+
+  def llamarVias(self):
+    conexionSlow = bD.ConexionBaseDeDatosSlow()
+    conexionSlow.abrirBasedeDatosSlow()
+    conexionSlow.cursorSlow.execute("SELECT * FROM VIAS")
+    self.vias = conexionSlow.cursorSlow.fetchall()
+    self.intervAltCrecimiento = 50
+    self.intervAltura = self.yDCV+self.intervAltCrecimiento
+    for i in self.vias:
+      self.crearTextoDentroCanvas(self.xDCV_C1,self.intervAltura+50,f"{i[0]}")
+      self.crearTextoDentroCanvas(self.xDCV_C2,self.intervAltura+50,f"{i[1]}")
+
+      self.carpetaImgVias = ArchivosYCarpetas.Carpeta("RecursosGraficos\\ImgVias")
+      if not self.carpetaImgVias.existeCarpeta:
+        self.carpetaImgVias.crearCarpeta()
+      self.imagenVia = Imagenes.ImagenHexaDecimalStr(i[2])
+      self.imagenViaPath = f"RecursosGraficos\\ImgVias\\imagenVia-{i[1]}.png"
+      try:
+        os.remove(self.imagenViaPath)
+      except FileNotFoundError:
+        pass
+      self.imagenVia.aImagen(self.imagenViaPath)
+
+      self.imgViaEnCanvas = Image.open(f"{self.imagenViaPath}")
+      self.dimImgVia = 150
+      self.imgViaEnCanvas = self.imgViaEnCanvas.resize((self.dimImgVia,self.dimImgVia), Image.ANTIALIAS)
+      globals()["imgViaEnCanvas" + str(i)] = ImageTk.PhotoImage(self.imgViaEnCanvas)
+
+      self.canvas.create_image(self.xDCV_C3,self.intervAltura+60,image=globals()["imgViaEnCanvas" + str(i)])
+
+      self.crearTextoDentroCanvas(self.xDCV_C4,self.intervAltura+50,"{:,}".format(i[3])+" Km/h")
+      self.crearTextoDentroCanvas(self.xDCV_C5,self.intervAltura+50,"$ "+"{:,}".format(i[4]))
+
+      self.intervAltura += 150+self.intervAltCrecimiento
+    conexionSlow.cerrarBaseDeDatosSlow()
+
+
+  def go_vehiculos(self):
+    self.page_vehiculos = Vehiculos(master=self.master, app=self)
+    self.frame.pack_forget()
+    self.page_vehiculos.start_page()
+  
+  def Open_menu(self,event=None):
+    global ac
+    self.name="vias"
+    if (ac== False):
+
+      self.Menu = menu(self.name,root=self.frame, app=self)
+      
+    
+      self.Menu.start_page()
+      ac=True
+
+#  self.Autopista = ImInter(self.frame,"Autopista.png", 0.15,0.37) 
 #    self.Autopista.sizeImage(90,240)
 #    self.Autopista.create()
 
@@ -863,29 +948,6 @@ class Vias(info):
 #    self.Textos2 = ImInter(self.frame,"Textos2.png", 0.75,0.56) 
 #    self.Textos2.sizeImage(400,600)
 #    self.Textos2.create()
-
-  
-
-    self.BottVehiculos = BottInter(self.frame,"Vehiculos.png",0.7,0.25, None,self.go_vehiculos)
-    self.BottVehiculos.modzise(130,70)
-    self.BottVehiculos.create()
-
-
-  def go_vehiculos(self):
-    self.page_vehiculos = Vehiculos(master=self.master, app=self)
-    self.frame.pack_forget()
-    self.page_vehiculos.start_page()
-  
-  def Open_menu(self,event=None):
-    global ac
-    self.name="vias"
-    if (ac== False):
-
-      self.Menu = menu(self.name,root=self.frame, app=self)
-      
-    
-      self.Menu.start_page()
-      ac=True
 
 
 # Daniel
@@ -1040,10 +1102,6 @@ class Graficas():
     self.frame.pack_forget()
     self.page_tabla_graficas.start_page()
 
-  def make_agregar_vehiculo(self):
-    self.page_agregar_vehiculo = guardarVehiculo(master=self.master, app=self)
-    self.frame.pack_forget()
-    self.page_agregar_vehiculo.start_page()
 
   def make_regresar(self):
     self.page_regresar = detection(master=self.master, app=self)
@@ -1147,7 +1205,7 @@ class BottInter(ImInter):
     return self.panel
 
 # grevy
-class guardarVehiculo(info):
+class guardarVia(info):
   def __init__(self,idusuario=None, idvideo=None,velocidad=None,velocidad_excedida=None, captura=None, master=None, app=None):
     self.captura_carro=captura
     self.idusuario = idusuario
@@ -1165,111 +1223,134 @@ class guardarVehiculo(info):
     self.velocidad=40.5
     self.velocidad_excedida=True
 
-    self.iminfo= ImInter(self.frame,"Video Speed Icon.png", 0.8,0.06) 
+    self.iminfo= ImInter(self.frame,"Vias Icon.png", 0.8,0.06) 
     self.iminfo.sizeImage(70,110)
     self.iminfo.create()
 
-    self.Text="Guardar Vehículo"
-    self.Title1 = textInter(self.frame,self.Text,30,0.5,0.23)
+    self.Text="Crear o Editar Vía"
+    self.Title1 = textInter(self.frame,self.Text,30,0.5,0.225)
     self.Title1.create_Tittle()
     
+    self.Text="Si quiere editar vía\ningrese el nombre de la Vía"
+    self.Title_viaEditar = textInter(self.frame,self.Text,14,0.21,0.33,'w')
+    self.Title_viaEditar.create_Tittle()
 
-    self.Text="ID Video "
-    self.Title_id_video = textInter(self.frame,self.Text,16,0.15,0.3,'w')
-    self.Title_id_video.create_Tittle()
-    self.id_video= IntVar(self.frame, value=self.idvideo)
-    self.entrada_vehiculo = Entry(self.frame,textvariable=self.id_video,width=10,
-     font = ('comics Sans MS',18))
-    self.entrada_vehiculo.place(relx = 0.34,rely=0.3,anchor ='w')
+    self.Text="Nombre Vía:"
+    self.Title_nombreVia = textInter(self.frame,self.Text,16,0.15,0.41,'w')
+    self.Title_nombreVia.create_Tittle()
+    self.NombreVia= StringVar(self.frame)
+    self.entradaNombreVia = Entry(self.frame,textvariable=self.NombreVia,width=10,font = ('comics Sans MS',18))
+    self.entradaNombreVia.place(relx = 0.34,rely=0.41,anchor ='w')
 
-    
-    self.Text="Captura:"
-    self.Title_captura = textInter(self.frame,self.Text,16,0.6,0.3,'w')
-    self.Title_captura.create_Tittle()
+    self.ButtonBuscar= BottInter(self.frame,"BotonBuscar.png",0.29,0.48,None, self.buscarVia)
+    self.ButtonBuscar.modzise(120,45)
+    self.ButtonBuscar.create()
 
-    self.mostrar_captura= ImInter(self.frame,"captura.png", 0.7,0.45)
-    self.mostrar_captura.create()
+    self.Text="Imagen Via:"
+    self.Title_ImgVia = textInter(self.frame,self.Text,16,0.56,0.38,'w')
+    self.Title_ImgVia.create_Tittle()
 
-    self.Text="Tipo de Vehículo:"
-    self.Title_tipo_vehiculo = textInter(self.frame,self.Text,16,0.15,0.38,'w')
-    self.Title_tipo_vehiculo.create_Tittle()
-    self.tipo_vehiculo= StringVar()
-    self.entrada_tipo_video = Entry(self.frame,textvariable=self.tipo_vehiculo,width=10, font = ('comics Sans MS',18))
-    self.entrada_tipo_video.place(relx = 0.34,rely=0.38,anchor ='w')
+    self.imgViaBoton = Button(self.frame,text="Subir Imagen",bg="black",fg="white", cursor="hand2", font=(40), bd=4, command=self.abrirArchivo)
+    self.imgViaBoton.place(relx=0.56, rely=0.61)
+    self.imgViaBoton.bind("<Enter>",self.enBotonImagenVia)
+    self.imgViaBoton.bind("<Leave>",self.fueraBotonImagenVia)
+    self.confirmacionImagenCargada = Label(self.frame, text="No se ha cargado la imagen", bg="white", font=(5), fg="red")
+    self.confirmacionImagenCargada.place(relx=0.65, rely=0.61)
+    self.imagenViaEntrada = ""
+    self.imVia= ImInter(self.frame,"Vias Icon.png", 0.61,0.51)
+    self.imVia.sizeImage(150,200)
+    self.imVia.create()
 
-    self.Text="PLACA:"
-    self.Title_placa = textInter(self.frame,self.Text,16,0.15,0.45,'w')
-    self.Title_placa.create_Tittle()
-    self.placa= DoubleVar(self.frame,value=self.velocidad)
-    self.entrada_placas = Entry(self.frame,textvariable=self.placa,width=10, font = ('comics Sans MS',18))
-    self.entrada_placas.place(relx = 0.34,rely=0.45,anchor ='w')
+    self.Text="Limite Velocidad (km/h):"
+    self.Title_LimVel = textInter(self.frame,self.Text,16,0.15,0.57,'w')
+    self.Title_LimVel.create_Tittle()
+    self.limiteVelocidad= StringVar()
+    self.entradaLimiteVelocidad = Entry(self.frame,textvariable=self.limiteVelocidad,width=10, font = ('comics Sans MS',18))
+    self.entradaLimiteVelocidad.place(relx = 0.34,rely=0.57,anchor ='w')
 
-    self.Text="Velocidad (km/h):"
-    self.Title_velocidad = textInter(self.frame,self.Text,16,0.15,0.53,'w')
-    self.Title_velocidad.create_Tittle()
-    if self.velocidad_excedida:
-      self.velocidad= StringVar(self.frame,value="Sí")
-    else:
-      self.velocidad= StringVar(self.frame,value="No")
-    self.entrada_velocidad = Entry(self.frame,textvariable=self.velocidad,width=10, font = ('comics Sans MS',18))
-    self.entrada_velocidad.place(relx = 0.34,rely=0.53,anchor ='w')
-
-
-    self.Text="Vía:"
-    self.Title_via = textInter(self.frame,self.Text,16,0.15,0.61,'w')
-    self.Title_via.create_Tittle()
-    self.via= StringVar()
-
-    self.opciones_vias = ttk.Combobox(self.frame, width=10, font = ('comics Sans MS',18),textvariable = self.via)
-    self.opciones_vias['value'] = vias
-    self.opciones_vias.place(relx = 0.34,rely=0.61,anchor ='w')
-    self.opciones_vias.current(0) 
-
-    self.Text="Velocidad Excedida:"
-    self.Title_velocidad_excedida = textInter(self.frame,self.Text,16,0.15,0.69,'w')
-    self.Title_velocidad_excedida.create_Tittle()
-    self.velocidad_excedida= StringVar()
-    self.entrada_velocidad_excedida = Entry(self.frame,textvariable=self.velocidad_excedida,width=10, font = ('comics Sans MS',18))
-    self.entrada_velocidad_excedida.place(relx = 0.34,rely=0.69,anchor ='w')
-    
     self.Text="Multa:"
-    self.Title_multa = textInter(self.frame,self.Text,16,0.6,0.61,'w')
+    self.Title_multa = textInter(self.frame,self.Text,16,0.15,0.64,'w')
     self.Title_multa.create_Tittle()
-    self.multa= StringVar()
+    self.multa= DoubleVar(self.frame,value=500000)
     self.entrada_multa = Entry(self.frame,textvariable=self.multa,width=10, font = ('comics Sans MS',18))
-    self.entrada_multa.place(relx = 0.71,rely=0.61,anchor ='w')
+    self.entrada_multa.place(relx = 0.34,rely=0.64,anchor ='w')
 
-
-    self.Text="ID Usuario:"
-    self.Title_id_usuario = textInter(self.frame,self.Text,16,0.6,0.69,'w')
-    self.Title_id_usuario.create_Tittle()
-    self.id_usuario= IntVar(self.frame, value=self.idusuario)
-    self.entrada_id_usuario = Entry(self.frame,textvariable=self.id_usuario,width=10, font = ('comics Sans MS',18))
-    self.entrada_id_usuario.place(relx = 0.71,rely=0.69,anchor ='w')
-
-
-    self.Button_guardar = BottInter(self.frame,"Boton_guardar.png",0.5,0.8,None, self.make_guardar_vehiculo)
+    self.Button_guardar = BottInter(self.frame,"Boton_guardar.png",0.5,0.8,None, self.make_guardar_via)
     self.Button_guardar.modzise(250,60)
     self.Button_guardar.create()
 
     self.canvas = Canvas(self.frame,bg="white",width=3,height=370,relief=FLAT)
     self.canvas.create_line(1.5, 0, 1.5, 370)
     self.canvas.place(relx = 0.5,rely=0.5,anchor = CENTER)
+
+  def abrirArchivo(self):
+    self.imagenViaEntrada = str(filedialog.askopenfile(title="Abrir Archivo Imagen de Via",initialdir="C:/",
+      filetypes=(("PNG Image","*.png"),("JPG Image","*.jpg"))))
+    startPath = self.imagenViaEntrada.find("'")
+    endPath = self.imagenViaEntrada.find("'",startPath+1)
+    self.imagenViaEntrada = self.imagenViaEntrada[startPath+1:endPath]
+    if self.imagenViaEntrada != "Non":
+        self.confirmacionImagenCargada.config(text="Imagen Cargada", fg="green")
+        self.imVia.panel.destroy()
+        self.imVia= ImInter(self.frame,self.imagenViaEntrada, 0.65,0.51)
+        self.imVia.sizeImage(150,200)
+        self.imVia.create()
+
+  def enBotonImagenVia(self, event):
+    self.imgViaBoton.config(bd=6)
+
+  def fueraBotonImagenVia(self, event):
+    self.imgViaBoton.config(bd=4)
   
-
-
-  def make_guardar_vehiculo(self):
-    if (self.vehiculo.get()!="" and self.placas.get()!="" and self.velocidad.get()!="" and self.via.get()!="" and self.limite_velocidad.get()!=""):
-      print(self.vehiculo.get())
-      #self.page_agrega = guardarVehiculo(master=self.master, app=self)
-      #self.frame.pack_forget()
-      #self.page_agregar_vehiculo.start_page()
+  def make_guardar_via(self):
+    via = self.NombreVia.get()
+    imagenVia = self.imagenViaEntrada
+    limiteVelocidad = self.limiteVelocidad.get()
+    multa = self.multa.get()
+    messageBoxTit = "Error en información"
+    if (via!="" and imagenVia!="Non" and limiteVelocidad !="" and multa!=""):
+      try:
+        limiteVelocidad = float(limiteVelocidad)
+      except ValueError:
+        return messagebox.showerror(messageBoxTit,"El limite de velocidad debe ser un Número.")
+      try:
+        multa = float(multa)
+      except ValueError:
+        return messagebox.showerror(messageBoxTit,"La multa debe ser un Número.")
+      conexionSlow = bD.ConexionBaseDeDatosSlow()
+      conexionSlow.cursorSlow.execute(f"SELECT VIA FROM VIAS WHERE VIA='{via}'")
+      posiblesVias = conexionSlow.cursorSlow.fetchall()
+      conexionSlow.cerrarBaseDeDatosSlow()
+      if len(posiblesVias)==0:
+        return self.crearVia(via,imagenVia,limiteVelocidad,multa)
+      else:
+        return self.actualizarVia(via,imagenVia,limiteVelocidad,multa)
     else:
-      self.mensaje()
-    
+      return self.mensaje()
+
+  def crearVia(self,via,imagenVia,limiteVelocidad,multa):
+    conexionSlow = bD.ConexionBaseDeDatosSlow()
+    conexionSlow.cursorSlow.execute(f"INSERT INTO VIAS (VIA,IMAGENVIA,LIMITEVELOCIDAD,MULTA) VALUES ('{via}','{imagenVia}',{limiteVelocidad},{multa})")
+    conexionSlow.cursorSlow.execute(f"SELECT IDVIA FROM VIAS WHERE VIA='{via}'")
+    viaEncontrada = conexionSlow.cursorSlow.fetchall()
+    conexionSlow.cerrarBaseDeDatosSlow()
+    if not len(viaEncontrada)==0:
+      return messagebox.showinfo("Via Guardada",f"La vía ha sido creada y guardada. El ID es {viaEncontrada[0][0]}")
+
+  def actualizarVia(self,via,imagenVia,limiteVelocidad,multa):
+    conexionSlow = bD.ConexionBaseDeDatosSlow()
+    conexionSlow.cursorSlow.execute(f"UPDATE VIAS SET VIA='{via}', IMAGENVIA='{imagenVia}', LIMITEVELOCIDAD={limiteVelocidad}, MULTA={multa} WHERE VIA='{via}'")
+    conexionSlow.cursorSlow.execute(f"SELECT IDVIA FROM VIAS WHERE VIA='{via}'")
+    viaEncontrada = conexionSlow.cursorSlow.fetchall()
+    conexionSlow.cerrarBaseDeDatosSlow()
+    if not len(viaEncontrada)==0:
+      return messagebox.showinfo("Via Guardada",f"La vía ha sido actualizada con éxito. El ID es {viaEncontrada[0][0]}")
+  
+  def buscarVia(self):
+    pass
   
   def mensaje(self):
-    MessageBox.showinfo("Información","Por favor, rellene todas las casillas.")
+    messagebox.showinfo("Información","Por favor, rellene todas las casillas.")
     
   def go_back(self):
     global ac
@@ -1533,4 +1614,4 @@ def elUsuario(usuario):
   app = App(root)
   root.mainloop()
 
-elUsuario(4)
+elUsuario(1)
