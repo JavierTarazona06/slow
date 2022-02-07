@@ -7,10 +7,11 @@ from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationTool
 class Graph:
     
     def __init__(self, *args):
-        #Toma argumentos que puede ser la base de datos o la base de datos y un objeto de tipo grafica anterior
-        if(len(args)==0):
-            self.mainConstructor()
-        else: self.ongoingConstructor(args)
+        #Toma argumentos que puede ser la base de datos con el idvideo, idvia y la multa
+        #o un objeto de tipo grafica anterior para seguir graficando con datos anteriores
+        if(len(args)==1):
+            self.ongoingConstructor(args)
+        else:self.mainConstructor()
         
     def mainConstructor(self):
         #Si no hay argumentos crea todo desde cero
@@ -91,6 +92,7 @@ class Graph:
         self.tabla.insert('',tk.END,values=(datos[0],datos[1],datos[2]))
             
         #Añadir Funcion para Guardar a la base de datos el carro infractor///
+        
         #////
 
     def graficarYMostrar(self):
@@ -111,7 +113,7 @@ class Graph:
         barratareas.update()
         canvas._tkcanvas.pack(side=tk.TOP)
         
-        self.ventana.mainloop()
+        self.ventana.update()
     
     def graficar(self):
         #Grafica todos los carros guardados hasta ahora con una distancia entre datos fija-------
