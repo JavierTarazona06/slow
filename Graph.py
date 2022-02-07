@@ -102,7 +102,6 @@ class Graph:
         #Añadir Funcion para Guardar a la base de datos el carro infractor///
         
         #El idvideo,idvia,multa ya están creados en el objeto
-        
         #////
 
     def graficarYMostrar(self):
