@@ -256,6 +256,10 @@ class info:
     self.imColombia= ImInter(self.frame,"Colombia Slogan.png", 0.9,0.1)
     self.imColombia.create()
 
+    self.police = ImInter(self.frame,f"{imagenPerfilPath}", 0.2,0.1) 
+    self.police.sizeImage(100,100)
+    self.police.create()
+
     self.BottReturn = BottInter(self.frame,"Return Arrow Icon.png",0.4,0.9, None,self.go_back)
     self.BottReturn.modzise(70,70)
     self.BottReturn.create()
@@ -339,7 +343,7 @@ class Date(info):
     self.inDate.sizeImage(80,80)
     self.inDate.create()
 
-    self.police = ImInter(self.frame,"in.png", 0.2,0.1) 
+    self.police = ImInter(self.frame,f"{imagenPerfilPath}", 0.2,0.1) 
     self.police.sizeImage(100,100)
     self.police.create()
 
@@ -781,6 +785,10 @@ class video(info):
     self.Button_life.modzise(370,60)
     self.Button_life.create()
 
+    self.police = ImInter(self.frame,f"{imagenPerfilPath}", 0.2,0.1) 
+    self.police.sizeImage(100,100)
+    self.police.create()
+
     self.Text="Registrar Video"
     self.Title1 = textInter(self.frame,self.Text,30,0.5,0.23)
     self.Title1.create_Tittle()
@@ -822,12 +830,6 @@ class video(info):
 class Vias(info):
   def own_widgets(self):
 
-    self.canvas = Canvas(self.frame, bg='white')
-    self.canvas.place(relx = 0.5,rely=0.58,anchor = CENTER, relheight=0.5,relwidth=0.7)
-
-    self.scrollbar = Scrollbar(self.canvas,bg='white')
-    self.scrollbar.place(relx = 0.99,rely=0.5,anchor = CENTER, relheight=1)
-
     self.inDate = ImInter(self.frame,"Vias Icon.png", 0.82,0.06)
     self.inDate.sizeImage(80,80)
     self.inDate.create()
@@ -836,9 +838,15 @@ class Vias(info):
     self.Tittle_Vias.sizeImage(80,120)
     self.Tittle_Vias.create()
 
-    self.police = ImInter(self.frame,"in.png", 0.2,0.1) 
+    self.police = ImInter(self.frame,f"{imagenPerfilPath}", 0.2,0.1) 
     self.police.sizeImage(100,100)
     self.police.create()
+
+    self.canvas = Canvas(self.frame, bg='white')
+    self.canvas.place(relx = 0.5,rely=0.58,anchor = CENTER, relheight=0.5,relwidth=0.7)
+
+    self.scrollbar = Scrollbar(self.canvas,bg='white')
+    self.scrollbar.place(relx = 0.99,rely=0.5,anchor = CENTER, relheight=1)
 
     self.xDCV_C1 = 94.48
     self.xDCV_C2 = 280
@@ -858,7 +866,7 @@ class Vias(info):
     self.BottVehiculos.modzise(130,70)
     self.BottVehiculos.create()
 
-    self.Button_crear_editar_via = BottInter(self.frame,"Crear_Editar_Via.png",0.85,0.8,None, self.make_agregar_editar_via)
+    self.Button_crear_editar_via = BottInter(self.frame,"Crear_Editar_Via.png",0.85,0.89,None, self.make_agregar_editar_via)
     self.Button_crear_editar_via.modzise(130,70)
     self.Button_crear_editar_via.create()
 
@@ -925,30 +933,6 @@ class Vias(info):
       self.Menu.start_page()
       ac=True
 
-#  self.Autopista = ImInter(self.frame,"Autopista.png", 0.15,0.37) 
-#    self.Autopista.sizeImage(90,240)
-#    self.Autopista.create()
-
-#    self.Arterias = ImInter(self.frame,"Arterias.png", 0.15,0.5) 
-#    self.Arterias.sizeImage(90,240)
-#    self.Arterias.create()
-#
-#    self.Principales = ImInter(self.frame,"Principales.png", 0.15,0.63) 
-#    self.Principales.sizeImage(90,240)
-#    self.Principales.create()
- 
-#    self.Locales = ImInter(self.frame,"Locales.png", 0.15,0.76) 
-#    self.Locales.sizeImage(90,240)
-#    self.Locales.create()
- 
-#    self.Textos = ImInter(self.frame,"Textos.png", 0.4,0.56) 
-#    self.Textos.sizeImage(400,240)
-#    self.Textos.create()
- 
-#    self.Textos2 = ImInter(self.frame,"Textos2.png", 0.75,0.56) 
-#    self.Textos2.sizeImage(400,600)
-#    self.Textos2.create()
-
 
 # Daniel
 class Vehiculos(info):
@@ -958,7 +942,7 @@ class Vehiculos(info):
     self.inDate.sizeImage(80,80)
     self.inDate.create()
 
-    self.police = ImInter(self.frame,"in.png", 0.2,0.1) 
+    self.police = ImInter(self.frame,f"{imagenPerfilPath}", 0.2,0.1) 
     self.police.sizeImage(100,100)
     self.police.create()
 
@@ -999,9 +983,9 @@ class detection(info):
     self.inDate.sizeImage(80,120)
     self.inDate.create()
 
-    self.police2 = ImInter(self.frame,"in.png", 0.2,0.1) 
-    self.police2.sizeImage(100,100)
-    self.police2.create()
+    self.police = ImInter(self.frame,f"{imagenPerfilPath}", 0.2,0.1) 
+    self.police.sizeImage(100,100)
+    self.police.create()
 
     self.BottGuardar = BottInter(self.frame,"GuardarBoton.png",0.5,0.8, None,None)
     self.BottGuardar.modzise(190,60)
@@ -1207,25 +1191,16 @@ class BottInter(ImInter):
 # grevy
 class guardarVia(info):
   def __init__(self,idusuario=None, idvideo=None,velocidad=None,velocidad_excedida=None, captura=None, master=None, app=None):
-    self.captura_carro=captura
-    self.idusuario = idusuario
-    self.idvideo= idvideo
-    self.velocidad=velocidad
-    self.velocidad_excedida=velocidad_excedida
-
     super().__init__(master,app)
 
-
   def own_widgets(self):
-    #estos son como ejemplo
-    self.idusuario = 1
-    self.idvideo= 10
-    self.velocidad=40.5
-    self.velocidad_excedida=True
-
     self.iminfo= ImInter(self.frame,"Vias Icon.png", 0.8,0.06) 
     self.iminfo.sizeImage(70,110)
     self.iminfo.create()
+
+    self.police = ImInter(self.frame,f"{imagenPerfilPath}", 0.2,0.1) 
+    self.police.sizeImage(100,100)
+    self.police.create()
 
     self.Text="Crear o Editar Vía"
     self.Title1 = textInter(self.frame,self.Text,30,0.5,0.225)
@@ -1242,9 +1217,13 @@ class guardarVia(info):
     self.entradaNombreVia = Entry(self.frame,textvariable=self.NombreVia,width=10,font = ('comics Sans MS',18))
     self.entradaNombreVia.place(relx = 0.34,rely=0.41,anchor ='w')
 
-    self.ButtonBuscar= BottInter(self.frame,"BotonBuscar.png",0.29,0.48,None, self.buscarVia)
+    self.ButtonBuscar= BottInter(self.frame,"BotonBuscar.png",0.23,0.48,None, self.buscarVia)
     self.ButtonBuscar.modzise(120,45)
     self.ButtonBuscar.create()
+
+    self.BotonEliminarVia= BottInter(self.frame,"EliminarViaBoton.png",0.34,0.48,None, self.eliminarVia)
+    self.BotonEliminarVia.modzise(120,45)
+    self.BotonEliminarVia.create()
 
     self.Text="Imagen Via:"
     self.Title_ImgVia = textInter(self.frame,self.Text,16,0.56,0.38,'w')
@@ -1304,11 +1283,17 @@ class guardarVia(info):
   
   def make_guardar_via(self):
     via = self.NombreVia.get()
-    imagenVia = self.imagenViaEntrada
+    imagenViaPath = self.imagenViaEntrada
     limiteVelocidad = self.limiteVelocidad.get()
     multa = self.multa.get()
     messageBoxTit = "Error en información"
-    if (via!="" and imagenVia!="Non" and limiteVelocidad !="" and multa!=""):
+    if (via!="" and imagenViaPath!="Non" and limiteVelocidad !="" and multa!=""):
+      try:
+        imagenViaObjeto = Imagenes.Imagen(imagenViaPath)
+        imagenVia = imagenViaObjeto.aHexaDecimalStr()
+      except FileNotFoundError:
+        imagenViaObjeto = Imagenes.Imagen("Vias Icon.png")
+        imagenVia = imagenViaObjeto.aHexaDecimalStr()
       try:
         limiteVelocidad = float(limiteVelocidad)
       except ValueError:
@@ -1331,23 +1316,66 @@ class guardarVia(info):
   def crearVia(self,via,imagenVia,limiteVelocidad,multa):
     conexionSlow = bD.ConexionBaseDeDatosSlow()
     conexionSlow.cursorSlow.execute(f"INSERT INTO VIAS (VIA,IMAGENVIA,LIMITEVELOCIDAD,MULTA) VALUES ('{via}','{imagenVia}',{limiteVelocidad},{multa})")
-    conexionSlow.cursorSlow.execute(f"SELECT IDVIA FROM VIAS WHERE VIA='{via}'")
+    conexionSlow.cursorSlow.execute(f"SELECT * FROM VIAS WHERE VIA='{via}'")
     viaEncontrada = conexionSlow.cursorSlow.fetchall()
     conexionSlow.cerrarBaseDeDatosSlow()
     if not len(viaEncontrada)==0:
-      return messagebox.showinfo("Via Guardada",f"La vía ha sido creada y guardada. El ID es {viaEncontrada[0][0]}")
+      return messagebox.showinfo("Via Guardada",f"La vía ha sido creada y guardada.\nEl ID de la vía {viaEncontrada[0][1]} es {viaEncontrada[0][0]}")
 
   def actualizarVia(self,via,imagenVia,limiteVelocidad,multa):
     conexionSlow = bD.ConexionBaseDeDatosSlow()
     conexionSlow.cursorSlow.execute(f"UPDATE VIAS SET VIA='{via}', IMAGENVIA='{imagenVia}', LIMITEVELOCIDAD={limiteVelocidad}, MULTA={multa} WHERE VIA='{via}'")
-    conexionSlow.cursorSlow.execute(f"SELECT IDVIA FROM VIAS WHERE VIA='{via}'")
-    viaEncontrada = conexionSlow.cursorSlow.fetchall()
+    conexionSlow.cursorSlow.execute(f"SELECT * FROM VIAS WHERE VIA='{via}'")
+    viaEncontrada = conexionSlow.cursorSlow.fetchone()
     conexionSlow.cerrarBaseDeDatosSlow()
     if not len(viaEncontrada)==0:
-      return messagebox.showinfo("Via Guardada",f"La vía ha sido actualizada con éxito. El ID es {viaEncontrada[0][0]}")
+      return messagebox.showinfo("Via Guardada",f"La vía ha sido actualizada con éxito.\nEl ID de la vía {viaEncontrada[1]} es {viaEncontrada[0]}")
   
   def buscarVia(self):
-    pass
+    via = self.NombreVia.get()
+    conexionSlow = bD.ConexionBaseDeDatosSlow()
+    conexionSlow.cursorSlow.execute(f"SELECT * FROM VIAS WHERE VIA='{via}'")
+    datosVia = conexionSlow.cursorSlow.fetchall()
+    conexionSlow.cerrarBaseDeDatosSlow()
+    if not len(datosVia)==0:
+        self.NombreVia.set(datosVia[0][1])
+
+        self.carpetaImgVias = ArchivosYCarpetas.Carpeta("RecursosGraficos\\ImgVias")
+        if not self.carpetaImgVias.existeCarpeta:
+          self.carpetaImgVias.crearCarpeta()
+        self.imagenVia = Imagenes.ImagenHexaDecimalStr(datosVia[0][2])
+        self.imagenViaPath = f"RecursosGraficos\\ImgVias\\imagenVia-{datosVia[0][1]}.png"
+        try:
+          os.remove(self.imagenViaPath)
+        except FileNotFoundError:
+          pass
+        self.imagenVia.aImagen(self.imagenViaPath)
+        self.imagenViaEntrada = self.imagenViaPath
+        self.imVia= ImInter(self.frame,self.imagenViaEntrada, 0.65,0.51)
+        self.imVia.sizeImage(150,200)
+        self.imVia.create()
+
+        self.limiteVelocidad.set(datosVia[0][3])
+        self.multa.set(datosVia[0][4])
+        return messagebox.showinfo("Datos Cargados",f"Datos de la vía {datosVia[0][1]} ID {datosVia[0][0]} cargados")
+    else:
+      return messagebox.showerror("Error al ingresar los datos",f"No existe la vía {via}")
+
+  def eliminarVia(self):
+    via = self.NombreVia.get()
+    conexionSlow = bD.ConexionBaseDeDatosSlow()
+    conexionSlow.cursorSlow.execute(f"SELECT * FROM VIAS WHERE VIA='{via}'")
+    datosVia = conexionSlow.cursorSlow.fetchall()
+    conexionSlow.cerrarBaseDeDatosSlow()
+    if len(datosVia)==0:
+      return messagebox.showerror("Error al ingresar los datos",f"No existe la vía {via}")
+    else:
+      eliminarViaConf = messagebox.askyesno("Eliminar Vía",f"¿Está seguro de eliminar la vía {datosVia[0][1]} ID {datosVia[0][0]}?")
+      if eliminarViaConf:
+        conexionSlow = bD.ConexionBaseDeDatosSlow()
+        conexionSlow.cursorSlow.execute(f"DELETE FROM VIAS WHERE VIA='{via}'")
+        conexionSlow.cerrarBaseDeDatosSlow()
+        return messagebox.showinfo("Proceso Completado",f"La vía {datosVia[0][1]} ID {datosVia[0][0]} ha sido eliminada")
   
   def mensaje(self):
     messagebox.showinfo("Información","Por favor, rellene todas las casillas.")
