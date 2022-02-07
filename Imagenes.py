@@ -33,3 +33,12 @@ class ImagenHexaDecimalStr():
         with open(direccionAGuardarImagen,"wb") as file:
             file.write(self.codigoImagenBinaria)
             file.close()
+
+def escribirTexto(imagenViaBin):
+    from io import open
+    archivo = open("archivotexto.txt","w")
+    archivo.write(imagenViaBin)
+    archivo.close()
+
+imagenVia = Imagen("RecursosGraficos\\Calle.png")
+imagenViaBin = imagenVia.aHexaDecimalStr()
