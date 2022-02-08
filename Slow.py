@@ -950,13 +950,46 @@ class Vehiculos(info):
     self.inVe.sizeImage(80,120)
     self.inVe.create()
 
-    self.inVe2 = ImInter(self.frame,"Vehiculos2.png", 0.5,0.6)
-    self.inVe2.sizeImage(425,1200)
-    self.inVe2.create()
-
     self.BottVehiculos = BottInter(self.frame,"ViasImage.png",0.4,0.25, None,self.go_Vias)
     self.BottVehiculos.modzise(130,70)
     self.BottVehiculos.create()
+
+    self.canvas = Canvas(self.frame, bg='white')
+    self.canvas.place(relx = 0.5,rely=0.58,anchor = CENTER, relheight=0.5,relwidth=0.7)
+
+    self.scrollbar = Scrollbar(self.canvas,bg='white')
+    self.scrollbar.place(relx = 0.99,rely=0.5,anchor = CENTER, relheight=1)
+
+    self.xDCV_C1 = 56.7
+    self.xDCV_C2 = self.xDCV_C1+90
+    self.xDCV_C3 = self.xDCV_C2+120
+    self.xDCV_C4 = self.xDCV_C3+150
+    self.xDCV_C5 = self.xDCV_C4+120
+    self.xDCV_C6 = self.xDCV_C5+100
+    self.xDCV_C7 = self.xDCV_C6+76
+    self.xDCV_C8 = self.xDCV_C7+100
+    self.xDCV_C9 = self.xDCV_C8+100
+    self.xDCV_C10 = self.xDCV_C9+96
+    self.yDCV = 50
+    self.crearTextoDentroCanvas(self.xDCV_C1,self.yDCV,"ID\nVEHÍCULO",'bold')
+    self.crearTextoDentroCanvas(self.xDCV_C2,self.yDCV,"IDVIDEO",'bold')
+    self.crearTextoDentroCanvas(self.xDCV_C3,self.yDCV,"CAPTURA",'bold')
+    self.crearTextoDentroCanvas(self.xDCV_C4,self.yDCV,"TIPO VEHÍCULO",'bold')
+    self.crearTextoDentroCanvas(self.xDCV_C5,self.yDCV,"PLACA",'bold')
+    self.crearTextoDentroCanvas(self.xDCV_C6,self.yDCV,"VELOCIDAD",'bold')
+    self.crearTextoDentroCanvas(self.xDCV_C7,self.yDCV,"ID VÍA",'bold')
+    self.crearTextoDentroCanvas(self.xDCV_C8,self.yDCV,"VELOCIDAD\nEXCEDIDA",'bold')
+    self.crearTextoDentroCanvas(self.xDCV_C9,self.yDCV,"MULTA",'bold')
+    self.crearTextoDentroCanvas(self.xDCV_C10,self.yDCV,"ID USUARIO",'bold')
+
+    self.llamarVehiculos()
+
+  def llamarVehiculos(self):
+    if rol=="JEFE":
+      pass
+
+  def crearTextoDentroCanvas(self,x,y,text,bold="",font=11):
+    self.canvas.create_text(x,y,font=('Helvetica', font, f'{bold}'), text=f"{text}")
 
   def go_Vias(self):
     self.page_vias = Vias(master=self.master, app=self)
