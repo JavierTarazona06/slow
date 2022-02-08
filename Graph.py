@@ -1,5 +1,5 @@
 import random
-import tkinter as tk
+from tkinter import * 
 from tkinter import ttk
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
@@ -20,7 +20,7 @@ class Graph:
         self.idvia=args[2]
         self.multa=args[3]
         
-        self.ventana=tk.Tk()
+        self.ventana=Tk()
         self.ventana.resizable(False,False)
         self.ventana.title("SLOW - Graficas y Datos")
 
@@ -40,7 +40,7 @@ class Graph:
         self.idvia=args[0].idvia
         self.multa=args[0].multa
         
-        self.ventana=tk.Tk()
+        self.ventana=Tk()
         self.ventana.resizable(False,False)
         self.ventana.title("SLOW - Graficas y Datos")
         
@@ -55,16 +55,16 @@ class Graph:
         
         #Finalmente añade los datos de la tabla anterior a la nueva tabla luego de creada
         for datos in self.carros:
-            self.tabla.insert('',tk.END,values=(datos[0],datos[1],datos[2]))
+            self.tabla.insert('',END,values=(datos[0],datos[1],datos[2]))
         
     def construirFrames(self):
         #Base Para Grafica, Botones y Tabla------------
-        self.frame1 = tk.Frame(self.ventana, background="white")
+        self.frame1 = Frame(self.ventana, background="white")
         self.frame1.config(width=str(int(self.ancho*0.65)), height=self.alto)
         
         self.crearGrafico()
         
-        self.frame2 = tk.Frame(self.ventana, background="#F0F0F0")
+        self.frame2 = Frame(self.ventana, background="#F0F0F0")
         self.frame2.config(width=str(int(self.ancho*0.35)), height=self.alto)
         
         self.estilarFrame2()
@@ -85,7 +85,7 @@ class Graph:
         
         #Añade Tabla y boton al frame2-------------        
         self.tabla = ttk.Treeview(self.frame2, columns=("#1","#2","#3"), height=int(self.alto/22))
-        self.tabla.pack(side = tk.TOP)
+        self.tabla.pack(side = TOP)
         self.tabla.heading("#1", text= "IdCarro")
         self.tabla.column("#1", width=int(self.ancho*0.19/3), anchor="center")
         self.tabla.heading("#2", text= "Velocidad")
@@ -93,13 +93,13 @@ class Graph:
         self.tabla.heading("#3", text= "Infractor")
         self.tabla.column("#3", width=int(self.ancho*0.19/3), anchor="center")
         
-        self.boton2= tk.Button(self.frame2, text="Retroceder", command= self.ventana.destroy).pack(side = tk.TOP)
+        self.boton2= Button(self.frame2, text="Retroceder", command= self.ventana.destroy).pack(side = TOP)
         
     def guardarCarros(self,datos):
         #Recibe una lista de datos [ID,Velocidad,Infractor, Captura]
         #Guarda los datos del carro para luego graficarlos y los añade a la tabla----------
         self.carros.append([datos[0],datos[1],datos[2]])
-        self.tabla.insert('',tk.END,values=(datos[0],datos[1],datos[2]))
+        self.tabla.insert('',END,values=(datos[0],datos[1],datos[2]))
             
         #Añadir Funcion para Guardar a la base de datos el carro infractor///
         #El idvideo,idvia,multa ya están creados en el objeto al inicio ejecutar -> import ConexionBaseDeDatosSlow() as bD
@@ -120,12 +120,12 @@ class Graph:
         #Añade y empaqueta el grafico al frame1 ----------
         canvas = FigureCanvasTkAgg(self.grafica,master=self.frame1)
         canvas.draw()
-        canvas.get_tk_widget().pack(side=tk.TOP)
+        canvas.get_tk_widget().pack(side=TOP)
         
         #Añade y empaqueta el widget enlazandolo con el grafico (varias opciones implementadas)---------
         barratareas = NavigationToolbar2Tk(canvas,self.frame1)
         barratareas.update()
-        canvas._tkcanvas.pack(side=tk.TOP)
+        canvas._tkcanvas.pack(side=TOP)
         
         self.ventana.update()
     
