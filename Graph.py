@@ -23,6 +23,7 @@ class Graph:
         self.ventana=Tk()
         self.ventana.resizable(False,False)
         self.ventana.title("SLOW - Graficas y Datos")
+        self.ventana.iconbitmap("RecursosGraficos\\Logo_Slow_Icon_Map.ico")
 
         self.ancho = int(self.ventana.winfo_screenwidth()/1.5)
         self.alto = int(self.ventana.winfo_screenheight()/1.5)
@@ -43,6 +44,7 @@ class Graph:
         self.ventana=Tk()
         self.ventana.resizable(False,False)
         self.ventana.title("SLOW - Graficas y Datos")
+        self.ventana.iconbitmap("RecursosGraficos\\Logo_Slow_Icon_Map.ico")
         
         self.ancho = args[0].ancho
         self.alto = args[0].alto
