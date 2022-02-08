@@ -16,8 +16,9 @@ class Graph:
     def mainConstructor(self,args):
         #Si no hay argumentos crea todo desde cero
         self.idvideo=args[0]
-        self.idvia=args[1]
-        self.multa=args[2]
+        self.idusuario=args[1]
+        self.idvia=args[2]
+        self.multa=args[3]
         
         self.ventana=tk.Tk()
         self.ventana.resizable(False,False)
@@ -35,6 +36,7 @@ class Graph:
     def ongoingConstructor(self, args):
         #Si hay argumentos agrega los vehículos ya creados y establece el tamaño de ventana facilmente
         self.idvideo=args[0].idvideo
+        self.idusuario=args[0].idusuario
         self.idvia=args[0].idvia
         self.multa=args[0].multa
         
@@ -94,14 +96,17 @@ class Graph:
         self.boton2= tk.Button(self.frame2, text="Retroceder", command= self.ventana.destroy).pack(side = tk.TOP)
         
     def guardarCarros(self,datos):
-        #Recibe una lista de datos [ID,Velocidad,Infractor]
+        #Recibe una lista de datos [ID,Velocidad,Infractor, Captura]
         #Guarda los datos del carro para luego graficarlos y los añade a la tabla----------
         self.carros.append([datos[0],datos[1],datos[2]])
         self.tabla.insert('',tk.END,values=(datos[0],datos[1],datos[2]))
             
         #Añadir Funcion para Guardar a la base de datos el carro infractor///
+        #El idvideo,idvia,multa ya están creados en el objeto al inicio ejecutar -> import ConexionBaseDeDatosSlow() as bD
         
-        #El idvideo,idvia,multa ya están creados en el objeto
+        #conexionSlow = bD.ConexionBaseDeDatosSlow()
+        #conexionSlow.cursorSlow.execute("INSERT INTO VEHICULOS (IDVIDEO,CAPTURA,IDVIA,VELOCIDADEXCEDIDA,MULTA,IDUSUARIO) VALUES ({0},{1},{2},{3},{4},{5})".format(self.idvideo,datos[3],self.idvia,datos[2],self.multa,self.idusuario))
+        
         #////
 
     def graficarYMostrar(self):
