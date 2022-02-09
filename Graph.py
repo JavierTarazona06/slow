@@ -25,8 +25,8 @@ class Graph:
         self.ventana.title("SLOW - Graficas y Datos")
         self.ventana.iconbitmap("RecursosGraficos\\Logo_Slow_Icon_Map.ico")
 
-        self.ancho = int(self.ventana.winfo_screenwidth()/1.5)
-        self.alto = int(self.ventana.winfo_screenheight()/1.5)
+        self.ancho = 1120
+        self.alto = 630
         
         self.ventana.geometry("{0}x{1}".format(self.ancho,self.alto))
         self.DURACION= 100
@@ -50,7 +50,7 @@ class Graph:
         self.alto = args[0].alto
         
         self.ventana.geometry("{0}x{1}".format(self.ancho,self.alto))
-        self.DURACION= 100
+        self.DURACION= args[0].DURACION
         self.carros= args[0].carros
         
         self.construirFrames()
@@ -73,7 +73,7 @@ class Graph:
     
     def crearGrafico(self):
         #Crea el grafico con un unico subplot----------------
-        self.grafica = Figure(figsize=((self.ancho*0.65/100),(self.alto/133)),dpi=100)
+        self.grafica = Figure(figsize=((self.ancho*0.65/100),(self.alto/133.8)),dpi=100)
         self.area_dibujo = self.grafica.add_subplot(1,1,1)
     
         self.grafica.suptitle('Velocidades de Vehiculos')
