@@ -749,7 +749,7 @@ class Date(info):
     conexionSlow.cursorSlow.execute(f"SELECT IDUSUARIO FROM USUARIOS WHERE IDUSUARIO='{idUsuario}'")
     usuarioEncontrado = conexionSlow.cursorSlow.fetchall()
     if len(usuarioEncontrado)>0:
-      messagebox.showinfo("Información Slow", "Información Guardada Exitosamente.\nCierre sesión y vuelva a ingresar para ver los cambios")
+      messagebox.showinfo("Información Slow", f"Información Guardada Exitosamente en el Usuario ID: {idUsuario}.\nCierre sesión y vuelva a ingresar para ver los cambios")
     else:
       messagebox.showerror(messageBoxTit,"No se guardaron los datos. Inténtelo nuevamente o reporte el problema para una solución")
     conexionSlow.cerrarBaseDeDatosSlow()
@@ -811,8 +811,9 @@ class video(info):
     
     self.frame.pack_forget()
     self.page_detection.start_page()
-    
 
+    import MainPruebaGraph
+    MainPruebaGraph.main()
 
   def Open_menu(self,event=None):
     global ac
@@ -866,9 +867,10 @@ class Vias(info):
     self.BottVehiculos.modzise(130,70)
     self.BottVehiculos.create()
 
-    self.Button_crear_editar_via = BottInter(self.frame,"Crear_Editar_Via.png",0.85,0.89,None, self.make_agregar_editar_via)
-    self.Button_crear_editar_via.modzise(130,70)
-    self.Button_crear_editar_via.create()
+    if rol=="JEFE":
+      self.Button_crear_editar_via = BottInter(self.frame,"Crear_Editar_Via.png",0.85,0.89,None, self.make_agregar_editar_via)
+      self.Button_crear_editar_via.modzise(170,70)
+      self.Button_crear_editar_via.create()
 
     self.canvas.config(yscrollcommand=self.scrollbar.set, scrollregion = self.canvas.bbox("all"))
     self.scrollbar.configure(command= self.canvas.yview )
@@ -961,15 +963,15 @@ class Vehiculos(info):
     self.scrollbar.place(relx = 0.99,rely=0.5,anchor = CENTER, relheight=1)
 
     self.xDCV_C1 = 56.7
-    self.xDCV_C2 = self.xDCV_C1+90
+    self.xDCV_C2 = self.xDCV_C1+80
     self.xDCV_C3 = self.xDCV_C2+120
-    self.xDCV_C4 = self.xDCV_C3+150
-    self.xDCV_C5 = self.xDCV_C4+120
-    self.xDCV_C6 = self.xDCV_C5+100
-    self.xDCV_C7 = self.xDCV_C6+76
-    self.xDCV_C8 = self.xDCV_C7+100
+    self.xDCV_C4 = self.xDCV_C3+140
+    self.xDCV_C5 = self.xDCV_C4+110
+    self.xDCV_C6 = self.xDCV_C5+95
+    self.xDCV_C7 = self.xDCV_C6+110
+    self.xDCV_C8 = self.xDCV_C7+115
     self.xDCV_C9 = self.xDCV_C8+100
-    self.xDCV_C10 = self.xDCV_C9+96
+    self.xDCV_C10 = self.xDCV_C9+110
     self.yDCV = 50
     self.crearTextoDentroCanvas(self.xDCV_C1,self.yDCV,"ID\nVEHÍCULO",'bold')
     self.crearTextoDentroCanvas(self.xDCV_C2,self.yDCV,"IDVIDEO",'bold')
@@ -977,16 +979,108 @@ class Vehiculos(info):
     self.crearTextoDentroCanvas(self.xDCV_C4,self.yDCV,"TIPO VEHÍCULO",'bold')
     self.crearTextoDentroCanvas(self.xDCV_C5,self.yDCV,"PLACA",'bold')
     self.crearTextoDentroCanvas(self.xDCV_C6,self.yDCV,"VELOCIDAD",'bold')
-    self.crearTextoDentroCanvas(self.xDCV_C7,self.yDCV,"ID VÍA",'bold')
+    self.crearTextoDentroCanvas(self.xDCV_C7,self.yDCV,"VÍA",'bold')
     self.crearTextoDentroCanvas(self.xDCV_C8,self.yDCV,"VELOCIDAD\nEXCEDIDA",'bold')
     self.crearTextoDentroCanvas(self.xDCV_C9,self.yDCV,"MULTA",'bold')
-    self.crearTextoDentroCanvas(self.xDCV_C10,self.yDCV,"ID USUARIO",'bold')
+    self.crearTextoDentroCanvas(self.xDCV_C10,self.yDCV,"USUARIO",'bold')
 
     self.llamarVehiculos()
+    
+    if rol=="JEFE":
+      self.BotonBorrarEditarVehiculo = BottInter(self.frame,"Boton Borrar o Editar Vehiculo.png",0.85,0.89,None, self.accionBorrarEditarVehiculo)
+      self.BotonBorrarEditarVehiculo.modzise(170,70)
+      self.BotonBorrarEditarVehiculo.create()
+
+    self.canvas.config(yscrollcommand=self.scrollbar.set, scrollregion = self.canvas.bbox("all"))
+    self.scrollbar.configure(command= self.canvas.yview )
+
+  def accionBorrarEditarVehiculo(self):
+    self.pageBorrarEditarVehiculo = GuardarVehiculo(master=self.master, app=self)
+    self.frame.pack_forget()
+    self.pageBorrarEditarVehiculo.start_page()
 
   def llamarVehiculos(self):
+    conexionSlow = bD.ConexionBaseDeDatosSlow()
+    conexionSlow.abrirBasedeDatosSlow()
     if rol=="JEFE":
-      pass
+      listaPoliciasAsignados = policiasAsignados.split(sep=",")
+      listaPoliciasAsignados.append(idUsuario)
+      self.vehiculosA = []
+      for i in listaPoliciasAsignados:
+        conexionSlow.cursorSlow.execute(f"SELECT * FROM VEHICULOS WHERE IDUSUARIO={i}")
+        self.vehiculosPolicia = conexionSlow.cursorSlow.fetchall()
+        for j in self.vehiculosPolicia:
+          self.vehiculosA.append(j)
+      self.vehiculos = self.ordenarVehiculos(self.vehiculosA)
+    else:
+      conexionSlow.cursorSlow.execute(F"SELECT * FROM VEHICULOS WHERE IDUSUARIO={idUsuario}")
+      self.vehiculos = conexionSlow.cursorSlow.fetchall()
+    self.intervAltCrecimiento = 50
+    self.intervAltura = self.yDCV+self.intervAltCrecimiento
+    for i in self.vehiculos:
+      self.crearTextoDentroCanvas(self.xDCV_C1,self.intervAltura+50,f"{i[0]}")
+      self.crearTextoDentroCanvas(self.xDCV_C2,self.intervAltura+50,f"{i[1]}")
+
+      self.carpetaImgVehiculos = ArchivosYCarpetas.Carpeta("RecursosGraficos\\ImgVehiculos")
+      if not self.carpetaImgVehiculos.existeCarpeta:
+        self.carpetaImgVehiculos.crearCarpeta()
+      self.imagenVehiculo = Imagenes.ImagenHexaDecimalStr(i[2])
+      self.imagenVehiculoPath = f"RecursosGraficos\\ImgVehiculos\\imagenVehiculo-{i[1]}.png"
+      try:
+        os.remove(self.imagenVehiculoPath)
+      except FileNotFoundError:
+        pass
+      self.imagenVehiculo.aImagen(self.imagenVehiculoPath)
+
+      self.imgVehiculoEnCanvas = Image.open(f"{self.imagenVehiculoPath}")
+      self.dimImgVehiculo = 150
+      self.imgVehiculoEnCanvas = self.imgVehiculoEnCanvas.resize((self.dimImgVehiculo,self.dimImgVehiculo), Image.ANTIALIAS)
+      globals()["imgVehiculoEnCanvas" + str(i)] = ImageTk.PhotoImage(self.imgVehiculoEnCanvas)
+
+      self.canvas.create_image(self.xDCV_C3,self.intervAltura+60,image=globals()["imgVehiculoEnCanvas" + str(i)])
+
+      self.crearTextoDentroCanvas(self.xDCV_C4,self.intervAltura+50,f"{i[3]}")
+      self.crearTextoDentroCanvas(self.xDCV_C5,self.intervAltura+50,f"{i[4]}")
+      self.crearTextoDentroCanvas(self.xDCV_C6,self.intervAltura+50,"{:,}".format(i[5])+" Km/h")
+
+      conexionSlow.cursorSlow.execute(f"SELECT VIA FROM VIAS WHERE IDVIA={i[6]}")
+      viaActTablaVehic =conexionSlow.cursorSlow.fetchone()
+      self.crearTextoDentroCanvas(self.xDCV_C7,self.intervAltura+50,f"{viaActTablaVehic[0]}")
+
+      if i[7]==1:
+        self.crearTextoDentroCanvas(self.xDCV_C8,self.intervAltura+50,"Verdadero")
+      else:
+        self.crearTextoDentroCanvas(self.xDCV_C8,self.intervAltura+50,"Falso")
+
+      self.crearTextoDentroCanvas(self.xDCV_C9,self.intervAltura+50,"$ "+"{:,}".format(i[8]))
+
+      conexionSlow.cursorSlow.execute(f"SELECT NOMBRE,APELLIDO FROM USUARIOS WHERE IDUSUARIO={i[9]}")
+      usuarioActTablaVehic =conexionSlow.cursorSlow.fetchone()
+      self.crearTextoDentroCanvas(self.xDCV_C10,self.intervAltura+50,f"{usuarioActTablaVehic[0]}\n{usuarioActTablaVehic[1]}")
+
+      self.intervAltura += 150+self.intervAltCrecimiento
+
+    conexionSlow.cerrarBaseDeDatosSlow()
+
+  def ordenarVehiculos(self,listaVehiculos):
+    listaVehiculosOr = []
+    tam = len(listaVehiculos)
+    for i in range (0,tam):
+      minAct = self.minListaVehiculos(listaVehiculos)
+      listaVehiculosOr.append(minAct)
+      listaVehiculos.remove(minAct)
+    return listaVehiculosOr
+
+  def minListaVehiculos(self,listaVehiculos):
+    minLista = listaVehiculos[0]
+    numListaMinId = minLista[0]
+    for i in listaVehiculos:
+      listaActual = i
+      numListaActual = listaActual[0]
+      if numListaActual<numListaMinId:
+        numListaMinId = numListaActual
+        minLista = listaActual
+    return minLista
 
   def crearTextoDentroCanvas(self,x,y,text,bold="",font=11):
     self.canvas.create_text(x,y,font=('Helvetica', font, f'{bold}'), text=f"{text}")
@@ -1429,6 +1523,333 @@ class guardarVia(info):
       self.Menu.start_page()
       ac=True
 
+class GuardarVehiculo(info):
+  def __init__(self,idusuario=None, idvideo=None,velocidad=None,velocidad_excedida=None, captura=None, master=None, app=None):
+    super().__init__(master,app)
+
+  def own_widgets(self):
+    self.iminfo= ImInter(self.frame,"Vias Icon.png", 0.8,0.06) 
+    self.iminfo.sizeImage(70,110)
+    self.iminfo.create()
+
+    self.police = ImInter(self.frame,f"{imagenPerfilPath}", 0.2,0.1) 
+    self.police.sizeImage(100,100)
+    self.police.create()
+
+    self.Text="Editar o Borrar Vehículo"
+    self.Title1 = textInter(self.frame,self.Text,30,0.5,0.225)
+    self.Title1.create_Tittle()
+    
+    self.Text="Para editar o borrar un vehículo\ningrese el ID o la Placa:"
+    self.Title_vehiculoEditar = textInter(self.frame,self.Text,14,0.21,0.33,'w')
+    self.Title_vehiculoEditar.create_Tittle()
+
+    self.Text="ID Vehículo:"
+    self.Title_idVehiculo = textInter(self.frame,self.Text,16,0.08,0.41,'w')
+    self.Title_idVehiculo.create_Tittle()
+    self.idVehiculo= StringVar(self.frame)
+    self.entradaidVehiculo = Entry(self.frame,textvariable=self.idVehiculo,width=10,font = ('comics Sans MS',18))
+    self.entradaidVehiculo.place(relx = 0.18,rely=0.41,anchor ='w')
+
+    self.Text="Placa:"
+    self.Title_placa= textInter(self.frame,self.Text,16,0.31,0.41,'w')
+    self.Title_placa.create_Tittle()
+    self.placa= StringVar(self.frame)
+    self.entradaplaca = Entry(self.frame,textvariable=self.placa,width=10,font = ('comics Sans MS',18))
+    self.entradaplaca.place(relx = 0.38,rely=0.41,anchor ='w')
+
+    self.ButtonBuscar= BottInter(self.frame,"BotonBuscar.png",0.23,0.48,None, self.buscarVehiculo)
+    self.ButtonBuscar.modzise(120,45)
+    self.ButtonBuscar.create()
+
+    self.BotonEliminarVehiculo= BottInter(self.frame,"BotonEliminarVehiculo.png",0.34,0.48,None, self.eliminarVehiculo)
+    self.BotonEliminarVehiculo.modzise(120,45)
+    self.BotonEliminarVehiculo.create()
+
+    self.col1x = 0.15
+    self.col1bx = self.col1x+0.19
+    self.col2x= 0.56
+    self.col2bx= self.col2x+0.19
+    self.coly = 0.57
+    self.col2y = 0.315
+    self.interAlt = 0.07
+
+    self.Text="ID Video:"
+    self.Title_IdVideo = textInter(self.frame,self.Text,16,self.col1x,self.coly,'w')
+    self.Title_IdVideo.create_Tittle()
+    self.IdVideo= Label(self.frame,width=10, font = ('comics Sans MS',18),bg="white")
+    self.IdVideo.place(relx = self.col1bx ,rely=self.coly,anchor ='w')
+    self.IdVideoCamp = "-"
+    self.IdVideo.config(text=self.IdVideoCamp)
+
+    self.Text="Tipo Vehículo:"
+    self.Title_TipoVehiculo = textInter(self.frame,self.Text,16,self.col1x,self.coly+self.interAlt,'w')
+    self.Title_TipoVehiculo.create_Tittle()
+    self.TipoVehiculo= StringVar()
+    self.entrada_TipoVehiculo = Entry(self.frame,textvariable=self.TipoVehiculo,width=10, font = ('comics Sans MS',18))
+    self.entrada_TipoVehiculo.place(relx = self.col1bx ,rely=self.coly+self.interAlt,anchor ='w')
+
+    self.Text="Velocidad:"
+    self.Title_Velocidad = textInter(self.frame,self.Text,16,self.col1x,self.coly+self.interAlt*2,'w')
+    self.Title_Velocidad.create_Tittle()
+    self.Velocidad= StringVar()
+    self.entrada_Velocidad = Entry(self.frame,textvariable=self.Velocidad,width=10, font = ('comics Sans MS',18))
+    self.entrada_Velocidad.place(relx = self.col1bx ,rely=self.coly+self.interAlt*2,anchor ='w')
+
+    self.Text="Velocidad Excedida:"
+    self.Title_VelocidadExcedida = textInter(self.frame,self.Text,16,self.col1x,self.coly+self.interAlt*3,'w')
+    self.Title_VelocidadExcedida.create_Tittle()
+    self.VelocidadExcedida = Label(self.frame,width=11, font = ('comics Sans MS',18),bg="white")
+    self.VelocidadExcedida.place(relx = self.col1bx ,rely=self.coly+self.interAlt*3,anchor ='w')
+    self.VelocidadExcedidaCamp = "-"
+    self.VelocidadExcedida.config(text=self.VelocidadExcedidaCamp)
+
+    self.Text="Imagen Vehiculo:"
+    self.Title_ImgVehiculo = textInter(self.frame,self.Text,16,self.col2x,self.col2y,'w')
+    self.Title_ImgVehiculo.create_Tittle()
+    self.imVehiculo= ImInter(self.frame,"Video Speed Icon.png", self.col2x+0.05,self.col2y+self.interAlt*1.8)
+    self.imVehiculo.sizeImage(150,200)
+    self.imVehiculo.create()
+    self.imgVehiculoBoton = Button(self.frame,text="Subir Imagen",bg="black",fg="white", cursor="hand2", font=(40), bd=4, command=self.abrirArchivo)
+    self.imgVehiculoBoton.place(relx=self.col2x, rely=self.col2y+self.interAlt*3)
+    self.imgVehiculoBoton.bind("<Enter>",self.enBotonImagenVehiculo)
+    self.imgVehiculoBoton.bind("<Leave>",self.fueraBotonImagenVehiculo)
+    self.confirmacionImagenCargada = Label(self.frame, text="No se ha cargado la imagen", bg="white", font=(5), fg="red")
+    self.confirmacionImagenCargada.place(relx=self.col2x+0.09, rely=self.col2y+self.interAlt*3)
+    self.imagenVehiculoEntrada = ""
+
+    self.Text="Via:"
+    self.Title_IdVia = textInter(self.frame,self.Text,16,self.col2x,self.col2y+self.interAlt*4,'w')
+    self.Title_IdVia.create_Tittle()
+    self.IdVia= Label(self.frame,width=10, font = ('comics Sans MS',18),bg="white")
+    self.IdVia.place(relx = self.col2bx ,rely=self.col2y+self.interAlt*4,anchor ='w')
+    self.IdViaCamp = "-"
+    self.IdVia.config(text=self.IdViaCamp)
+
+    self.Text="Multa:"
+    self.Title_Multa = textInter(self.frame,self.Text,16,self.col2x,self.col2y+self.interAlt*5,'w')
+    self.Title_Multa.create_Tittle()
+    self.Multa= StringVar()
+    self.entrada_Multa = Entry(self.frame,textvariable=self.Multa,width=10, font = ('comics Sans MS',18))
+    self.entrada_Multa.place(relx = self.col2bx ,rely=self.col2y+self.interAlt*5,anchor ='w')
+
+    self.Text="Usuario:"
+    self.Title_IdUsuario = textInter(self.frame,self.Text,16,self.col2x,self.col2y+self.interAlt*6,'w')
+    self.Title_IdUsuario.create_Tittle()
+    self.IdUsuario = Label(self.frame,width=10, font = ('comics Sans MS',18),bg="white")
+    self.IdUsuario.place(relx = self.col2bx ,rely=self.col2y+self.interAlt*6,anchor ='w')
+    self.IdUsuarioCamp = "-"
+    self.IdUsuario.config(text=self.IdUsuarioCamp)
+
+    self.Button_guardar = BottInter(self.frame,"Boton_guardar.png",0.65,0.9,None, self.make_guardar_Vehiculo)
+    self.Button_guardar.modzise(250,60)
+    self.Button_guardar.create()
+
+    self.canvas = Canvas(self.frame,bg="white",width=3,height=370,relief=FLAT)
+    self.canvas.create_line(1.5, 0, 1.5, 370)
+    self.canvas.place(relx = 0.5,rely=0.5,anchor = CENTER)
+
+  def abrirArchivo(self):
+    self.imagenVehiculoEntrada = str(filedialog.askopenfile(title="Abrir Archivo Imagen de Via",initialdir="C:/",
+      filetypes=(("PNG Image","*.png"),("JPG Image","*.jpg"))))
+    startPath = self.imagenVehiculoEntrada.find("'")
+    endPath = self.imagenVehiculoEntrada.find("'",startPath+1)
+    self.imagenVehiculoEntrada = self.imagenVehiculoEntrada[startPath+1:endPath]
+    if self.imagenVehiculoEntrada != "Non":
+        self.confirmacionImagenCargada.config(text="Imagen Cargada", fg="green")
+        self.imVehiculo.panel.destroy()
+        self.imVehiculo= ImInter(self.frame,self.imagenVehiculoEntrada,self.col2x+0.05,self.col2y+self.interAlt*1.8)
+        self.imVehiculo.sizeImage(150,200)
+        self.imVehiculo.create()
+
+  def enBotonImagenVehiculo(self, event):
+    self.imgVehiculoBoton.config(bd=6)
+
+  def fueraBotonImagenVehiculo(self, event):
+    self.imgVehiculoBoton.config(bd=4)
+  
+  def make_guardar_Vehiculo(self):
+    idVehiculo= self.idVehiculo.get()
+    idVideo = self.IdVideoCamp
+    imagenVehiculoPath = self.imagenVehiculoEntrada
+    tipoVehiculo = self.TipoVehiculo.get()
+    placa = self.placa.get()
+    velocidad = self.Velocidad.get()
+    idVia = self.IdViaCamp
+    velocidadExcedida = self.VelocidadExcedidaCamp
+    multa = self.Multa.get()
+    idUsuarioVehiculo = self.IdUsuarioCamp
+    messageBoxTit = "Error en información"
+    if (idVehiculo!="" and idVideo!="" and imagenVehiculoPath!="Non" and tipoVehiculo!="" and placa!=""
+     and velocidad!="" and idVia!="" and velocidadExcedida!="" and multa!="" and idUsuarioVehiculo!=""):
+      try:
+        idVehiculo = int(idVehiculo)
+      except ValueError:
+        return messagebox.showerror(messageBoxTit,"El ID de Vehículo debe ser un Número.")
+      try:
+        idVideo = int(idVideo)
+      except ValueError:
+        pass
+      try:
+        imagenVehiculoObjeto = Imagenes.Imagen(imagenVehiculoPath)
+        imagenVehiculo = imagenVehiculoObjeto.aHexaDecimalStr()
+      except FileNotFoundError:
+        imagenVehiculoObjeto = Imagenes.Imagen("Video Speed Icon.png")
+        imagenVehiculo = imagenVehiculoObjeto.aHexaDecimalStr()
+      try:
+        velocidad = float(velocidad)
+      except ValueError:
+        return messagebox.showerror(messageBoxTit,"La velocidad debe ser un Número.")
+      try:
+        idVia = int(idVia)
+      except ValueError:
+        conexionSlow = bD.ConexionBaseDeDatosSlow()
+        conexionSlow.cursorSlow.execute(f"SELECT IDVIA FROM VEHICULOS WHERE IDVEHICULO={idVehiculo}")
+        idVia= int(conexionSlow.cursorSlow.fetchone()[0])
+        conexionSlow.cerrarBaseDeDatosSlow()
+      if (velocidadExcedida=="VERDADERO"):
+        velocidadExcedida = True
+      elif (velocidadExcedida=="FALSO"):
+        velocidadExcedida = False
+      else:
+        return messagebox.showerror(messageBoxTit,"La velocidad excedida debe ser VERDADERO o FALSO.")
+      conexionSlow = bD.ConexionBaseDeDatosSlow()
+      conexionSlow.cursorSlow.execute(f"SELECT LIMITEVELOCIDAD FROM VIAS WHERE IDVIA='{idVia}'")
+      velocidadEnVia = conexionSlow.cursorSlow.fetchone()
+      velocidadEnVia = float(velocidadEnVia[0])
+      conexionSlow.cerrarBaseDeDatosSlow()
+      if velocidad>velocidadEnVia:
+        velocidadExcedida = True
+      else:
+        velocidadExcedida = False
+      self.VelocidadExcedidaCamp = "VERDADERO" if velocidadExcedida else "FALSO"
+      self.VelocidadExcedida.config(text=self.VelocidadExcedidaCamp)
+      try:
+        multa = float(multa)
+      except ValueError:
+        return messagebox.showerror(messageBoxTit,"La multa debe ser un Número.")
+      try:
+        idUsuarioVehiculo = int(idUsuarioVehiculo)
+      except ValueError:
+        conexionSlow = bD.ConexionBaseDeDatosSlow()
+        conexionSlow.cursorSlow.execute(f"SELECT IDUSUARIO FROM VEHICULOS WHERE IDVEHICULO={idVehiculo}")
+        idUsuario = int(conexionSlow.cursorSlow.fetchone()[0])
+        conexionSlow.cerrarBaseDeDatosSlow()
+      conexionSlow = bD.ConexionBaseDeDatosSlow()
+      conexionSlow.cursorSlow.execute(f"UPDATE VEHICULOS SET CAPTURA='{imagenVehiculo}', TIPOVEHICULO='{tipoVehiculo}', PLACA='{placa}', VELOCIDAD={velocidad}, VELOCIDADEXCEDIDA={velocidadExcedida}, MULTA={multa} WHERE IDVEHICULO='{idVehiculo}'")
+      conexionSlow.cursorSlow.execute(f"SELECT * FROM VEHICULOS WHERE IDVEHICULO='{idVehiculo}'")
+      vehiculoEncontrado = conexionSlow.cursorSlow.fetchall()
+      conexionSlow.cerrarBaseDeDatosSlow()
+      if not len(vehiculoEncontrado)==0:
+        return messagebox.showinfo("Vehículo Guardado",f"El vehículo ha sido guardado con éxito.\nEl ID del vehículo es {vehiculoEncontrado[0][0]} de placa {vehiculoEncontrado[0][4]}")
+      else:
+        return messagebox.showinfo("Información",f"No se ha encontrado el vehículo\nID: {idVehiculo} de placa {placa}")
+    else:
+      return self.mensaje()
+  
+  def buscarVehiculo(self):
+    idVehiculo = self.idVehiculo.get()
+    placa = self.placa.get()
+    conexionSlow = bD.ConexionBaseDeDatosSlow()
+    conexionSlow.cursorSlow.execute(f"SELECT * FROM VEHICULOS WHERE IDVEHICULO='{idVehiculo}'")
+    datosVehiculo = conexionSlow.cursorSlow.fetchall()
+    if len(datosVehiculo)==0:
+      conexionSlow.cursorSlow.execute(f"SELECT * FROM VEHICULOS WHERE PLACA='{placa}'")
+      datosVehiculo = conexionSlow.cursorSlow.fetchall()
+    conexionSlow.cerrarBaseDeDatosSlow()
+    if not len(datosVehiculo)==0:
+        self.idVehiculo.set(datosVehiculo[0][0])
+        self.IdVideoCamp = datosVehiculo[0][1]
+        self.IdVideo.config(text=self.IdVideoCamp)
+
+        self.carpetaImgVehiculos = ArchivosYCarpetas.Carpeta("RecursosGraficos\\ImgVehiculos")
+        if not self.carpetaImgVehiculos.existeCarpeta:
+          self.carpetaImgVehiculos.crearCarpeta()
+        self.imagenVehiculo = Imagenes.ImagenHexaDecimalStr(datosVehiculo[0][2])
+        self.imagenVehiculoPath = f"RecursosGraficos\\ImgVehiculos\\imagenVehiculo-{datosVehiculo[0][0]}-{datosVehiculo[0][4]}.png"
+        try:
+          os.remove(self.imagenVehiculoPath)
+        except FileNotFoundError:
+          pass
+        self.imagenVehiculo.aImagen(self.imagenVehiculoPath)
+        self.imagenVehiculoEntrada = self.imagenVehiculoPath
+        self.imVehiculo= ImInter(self.frame,self.imagenVehiculoEntrada,self.col2x+0.05,self.col2y+self.interAlt*1.8)
+        self.imVehiculo.sizeImage(150,200)
+        self.imVehiculo.create()
+
+        self.TipoVehiculo.set(datosVehiculo[0][3])
+        self.placa.set(datosVehiculo[0][4])
+        self.Velocidad.set(datosVehiculo[0][5])
+
+        conexionSlow = bD.ConexionBaseDeDatosSlow()
+        conexionSlow.cursorSlow.execute(f"SELECT VIA FROM VIAS WHERE IDVIA={datosVehiculo[0][6]}")
+        viaActVehic =conexionSlow.cursorSlow.fetchone()
+        self.IdViaCamp = viaActVehic[0]
+        self.IdVia.config(text=self.IdViaCamp)
+
+        self.VelocidadExcedidaCamp = datosVehiculo[0][7]
+        if self.VelocidadExcedidaCamp==1:
+          self.VelocidadExcedidaCamp="VERDADERO"
+        else:
+          self.VelocidadExcedidaCamp="FALSO"
+        self.VelocidadExcedida.config(text=self.VelocidadExcedidaCamp)
+        self.Multa.set(datosVehiculo[0][8])
+
+        conexionSlow.cursorSlow.execute(f"SELECT NOMBRE,APELLIDO FROM USUARIOS WHERE IDUSUARIO={datosVehiculo[0][9]}")
+        usuarioActVehic =conexionSlow.cursorSlow.fetchone()
+        self.IdUsuarioCamp = usuarioActVehic[0]+"\n"+usuarioActVehic[1]
+        self.IdUsuario.config(text=self.IdUsuarioCamp)
+        conexionSlow.cerrarBaseDeDatosSlow()
+        return messagebox.showinfo("Datos Cargados",f"Datos del Vehículo ID: {datosVehiculo[0][0]} Placa: {datosVehiculo[0][4]} cargados")
+    else:
+      return messagebox.showerror("Error al ingresar los datos",f"No existe el vehiculo ID: {idVehiculo} o Placa: {placa}")
+
+  def eliminarVehiculo(self):
+    idVehiculo = self.idVehiculo.get()
+    placa = self.placa.get()
+    conexionSlow = bD.ConexionBaseDeDatosSlow()
+    conexionSlow.cursorSlow.execute(f"SELECT * FROM VEHICULOS WHERE IDVEHICULO='{idVehiculo}'")
+    datosVehiculo = conexionSlow.cursorSlow.fetchall()
+    conexionSlow.cerrarBaseDeDatosSlow()
+    bandera = False
+    if len(datosVehiculo)==0:
+      conexionSlow = bD.ConexionBaseDeDatosSlow()
+      conexionSlow.cursorSlow.execute(f"SELECT * FROM VEHICULOS WHERE PLACA='{placa}'")
+      datosVehiculo = conexionSlow.cursorSlow.fetchall()
+      conexionSlow.cerrarBaseDeDatosSlow()
+      if len(datosVehiculo)==0:
+        return messagebox.showerror("Error al ingresar los datos",f"No existe el vehículo ID: {idVehiculo} o Placa: {placa}")
+      else:
+        bandera = True
+    else:
+      bandera = True
+    if bandera:
+      eliminarVehiculoConf = messagebox.askyesno("Eliminar Vehículo",f"¿Está seguro de eliminar el Vehículo ID: {datosVehiculo[0][0]} Placa: {datosVehiculo[0][4]}?")
+      if eliminarVehiculoConf:
+        conexionSlow = bD.ConexionBaseDeDatosSlow()
+        conexionSlow.cursorSlow.execute(f"DELETE FROM VEHICULOS WHERE IDVEHICULO='{datosVehiculo[0][0]}'")
+        conexionSlow.cerrarBaseDeDatosSlow()
+        return messagebox.showinfo("Proceso Completado",f"El Vehículo ID: {datosVehiculo[0][0]} Placa: {datosVehiculo[0][4]} ha sido eliminado")
+  
+  def mensaje(self):
+    messagebox.showinfo("Información","Por favor, rellene todas las casillas.")
+    
+  def go_back(self):
+    global ac
+    ac=False
+    self.frame.pack_forget()
+    self.go_back = self.app.start_page()
+
+  def Open_menu(self,event=None):
+    global ac
+    self.name="video"
+
+    if (ac== False):
+
+      self.Menu = menu(self.name,root=self.frame, app=self)    
+      self.Menu.start_page()
+      ac=True
+
 
 class textInter(ImInter):
 
@@ -1531,38 +1952,44 @@ class history(info):
 
     for x in range(len(History_Videos)):
       global id
+      conexionSlow = bD.ConexionBaseDeDatosSlow()
+      self.IdVideo = History_Videos[x][0]
 
-      if (History_Videos[x][0]==id):
-       
+      self.IdUsuario = History_Videos[x][1]
+      conexionSlow.cursorSlow.execute(f"SELECT NOMBRE,APELLIDO FROM USUARIOS WHERE IDUSUARIO={self.IdUsuario}")
+      self.UsuarioVideo = conexionSlow.cursorSlow.fetchone()
+      self.UsuarioVideo = self.UsuarioVideo[0]+" "+self.UsuarioVideo[1]
+
+      self.videoPath = History_Videos[x][2]
+      globals()["video" + str(self.contador)] = VidInter(self.frame,self.videoPath,self.x,self.y,self.canvas,self.contador,self)
         
-        self.name_video = History_Videos[x][1]
-        self.via = History_Videos[x][2]
-        self.ciudad = History_Videos[x][3]
-        self.direccion = History_Videos[x][4]
-        self.fecha = History_Videos[x][5]
+      globals()["button_detection" + str(self.contador)]= BottInter(self.canvas,"Video Speed Icon.png",0.5,0.8,'',partial(self.make_page_detection,self.videoPath))
+      globals()["button_detection" + str(x)].modzise(95,50)
+      globals()["button_detection" + str(x)].create()
+      self.window= globals()["button_detection" + str(x)].return_panel()
 
-        globals()["video" + str(self.contador)] = VidInter(self.frame,self.name_video,self.x,self.y,self.canvas,self.contador,self)
+      self.IdVia = History_Videos[x][3]
+      conexionSlow.cursorSlow.execute(f"SELECT VIA FROM VIAS WHERE IDVIA={self.IdVia}")
+      self.Via = conexionSlow.cursorSlow.fetchone()
+      self.Via = self.Via[0]
+
+      self.Ciudad = History_Videos[x][4]
+      self.Direccion = History_Videos[x][5]
+      self.Fecha = History_Videos[x][6]
+
+      self.text= f"ID: {self.IdVideo} - {self.Via} - {self.Ciudad} - {self.Direccion}\n{self.Fecha} - {self.UsuarioVideo}"
+      self.canvas.create_text(self.x+160,self.y+230,font=('Helvetica', 11, 'bold'), text=self.text)
+
+      self.canvas.create_window(self.x+390,self.y+245, window=self.window, anchor=CENTER)
         
-        globals()["button_detection" + str(self.contador)]= BottInter(self.canvas,"Video Speed Icon.png",0.5,0.8,'',partial(self.make_page_detection,self.name_video))
-        globals()["button_detection" + str(x)].modzise(95,50)
-        globals()["button_detection" + str(x)].create()
-        self.window= globals()["button_detection" + str(x)].return_panel()
-
-        self.text= self.via+" - "+self.ciudad + " - " + self.fecha
-        self.canvas.create_text(self.x+160,self.y+230,font=('Helvetica', 11, 'bold'), text=self.text)
-        self.canvas.create_text(self.x+50,self.y+250,font=('Helvetica', 11), text=self.direccion)
-
-        
-        self.canvas.create_window(self.x+390,self.y+245, window=self.window, anchor=CENTER)
-
-        
-        if (self.x==0):
-          self.x=500
-        else:
-          self.x=0
-        self.contador+=1
-        if (self.contador % 2 ==0):
-          self.y+=300
+      if (self.x==0):
+        self.x=500
+      else:
+        self.x=0
+      self.contador+=1
+      if (self.contador % 2 ==0):
+        self.y+=300
+      conexionSlow.cerrarBaseDeDatosSlow()
     
     self.create_video()
 
@@ -1580,14 +2007,11 @@ class history(info):
   def create_video(self):
      for x in range(len(History_Videos)):
       global id
-      if (History_Videos[x][0]==id):
-        globals()["video" + str(x)].create_label()
-        globals()["video" + str(x)].show()
-        globals()["video" + str(x)].create()
-        globals()["video" + str(x)].action()
+      globals()["video" + str(x)].create_label()
+      globals()["video" + str(x)].show()
+      globals()["video" + str(x)].create()
+      globals()["video" + str(x)].action()
         
-
-
   def Open_menu(self,event=None):
     global ac
     self.name="history"
@@ -1657,11 +2081,11 @@ def elUsuario(usuario):
   root.iconbitmap("RecursosGraficos\\Logo_Slow_Icon_Map.ico")
   root.configure(bg='white')
 
-  History_Videos =  [(1,"/home/runner/POO/video2.mp4","CARRETERA","Bogotá D.C","km 7 - Tunja","10/10/2021"),
-                    (1,"/home/runner/POO/video2.mp4","CARRETERA","Bogotá D.C","km 7 - Tunja","11/10/2021"),
-                    (1,"/home/runner/POO/video2.mp4","CARRETERA","Bogotá D.C","km 7 - Tunja","12/10/2021"),
-                    (1,"/home/runner/POO/video2.mp4","CARRETERA","Bogotá D.C","km 7 - Tunja","13/10/2021"),
-                    (1,"/home/runner/POO/video2.mp4","CARRETERA","Bogotá D.C","km 7 - Tunja","14/10/2021"),
+  History_Videos =  [(1,1,"/home/runner/POO/video2.mp4",3,"Bogotá D.C","km 7 - Tunja","10/10/2021"),
+                    (1,1,"/home/runner/POO/video2.mp4",3,"Bogotá D.C","km 7 - Tunja","11/10/2021"),
+                    (1,1,"/home/runner/POO/video2.mp4",3,"Bogotá D.C","km 7 - Tunja","12/10/2021"),
+                    (1,1,"/home/runner/POO/video2.mp4",3,"Bogotá D.C","km 7 - Tunja","13/10/2021"),
+                    (1,1,"/home/runner/POO/video2.mp4",3,"Bogotá D.C","km 7 - Tunja","14/10/2021"),
                     ]
   vias= ["Autopista/Carretera", "Arterias", "Principales", "Locales y Especiales"]
 
@@ -1674,5 +2098,3 @@ def elUsuario(usuario):
   tomarInfoUsuario()
   app = App(root)
   root.mainloop()
-
-elUsuario(1)
