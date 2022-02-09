@@ -14,5 +14,6 @@ def main():
         temp= [i,random.randint(30,80),random.choice([True,False])]
         graficas.guardarCarros(temp)
     graficas.graficarYMostrar()
+    input()
     
-main()#----------------------------------------------------------
+#----------------------------------------------------------
