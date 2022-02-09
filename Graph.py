@@ -35,7 +35,7 @@ class Graph:
         self.construirFrames()
         
     def ongoingConstructor(self, args):
-        #Si hay argumentos agrega los vehículos ya creados y establece la misma ventana
+        #Si hay argumentos agrega los vehículos ya creados y establece el tamaño de ventana facilmente
         self.idvideo=args[0].idvideo
         self.idusuario=args[0].idusuario
         self.idvia=args[0].idvia
