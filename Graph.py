@@ -14,7 +14,7 @@ class Graph:
         else: self.mainConstructor(args[0])
         
     def mainConstructor(self,idVideo):
-        self.pathToSaveGraphs = f"Graficas\\GraficaVideo-{idVideo}.png"
+        self.pathToSaveGraphs = f"Graficas\\\GraficaVideo-{idVideo}.png"
         #Si no hay argumentos crea todo desde cero
         self.ventana=Tk()
         self.ventana.resizable(False,False)

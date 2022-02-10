@@ -824,9 +824,10 @@ class video(info):
         self.paragraph1.panel.destroy()
         self.idViaVideo = -1
         self.widgetscreados = False
-      return messagebox.showerror("Error al ingresar información",f"La vía ingresada {viaActual} no existe")
+      return messagebox.showerror("Error al ingresar información",f"La vía ingresada '{viaActual}' no existe")
     self.idViaVideo = idVia[0][0]
     self.crearWidgetsSubirVideo()
+    messagebox.showinfo("Datos Satisfactorios",f"Vía '{viaActual}' seleccionada. Ya puede subir el vídeo.")
 
   def viaSeleccionada(self):
     viaActual = self.ViaParaDeteccion.get()
@@ -839,9 +840,10 @@ class video(info):
         self.paragraph1.panel.destroy()
         self.idViaVideo = -1
         self.widgetscreados = False
-      return messagebox.showerror("Error al ingresar información",f"La vía ingresada {viaActual} no existe")
+      return messagebox.showerror("Error al ingresar información",f"La vía ingresada '{viaActual}' no existe")
     self.idViaVideo = idVia[0][0]
     self.crearWidgetsSubirVideo()
+    messagebox.showinfo("Datos Satisfactorios",f"Vía '{viaActual}' seleccionada. Ya puede subir el vídeo.")
   
   def crearWidgetsSubirVideo(self):
     self.Button_file = BottInter(self.frame,"Boton.png",0.5,0.78,None,self.Open_File)
@@ -1998,6 +2000,7 @@ class history(info):
   global id
   
   def own_widgets(self):
+    global History_Videos
     self.iminfo= ImInter(self.frame,"History Icon.png", 0.82,0.06) 
     self.iminfo.sizeImage(80,80)
     self.iminfo.create()
@@ -2015,6 +2018,22 @@ class history(info):
     self.y = 0
     self.x = 0
     self.contador=0
+
+    conexionSlow = bD.ConexionBaseDeDatosSlow()
+    if rol=="JEFE":
+      listaPoliciasAsignados = policiasAsignados.split(sep=",")
+      listaPoliciasAsignados.append(idUsuario)
+      videosInicial = []
+      for i in listaPoliciasAsignados:
+        conexionSlow.cursorSlow.execute(f"SELECT * FROM DETECCIONYVIDEOS WHERE IDUSUARIO={i}")
+        videosPolicia = conexionSlow.cursorSlow.fetchall()
+        for j in videosPolicia:
+          videosInicial.append(j)
+      History_Videos = ordenarListaPaquete(videosInicial)
+    else:
+      conexionSlow.cursorSlow.execute(f"SELECT * FROM DETECCIONYVIDEOS WHERE IDUSUARIO={idUsuario}")
+      History_Videos = conexionSlow.cursorSlow.fetchall()
+    conexionSlow.cerrarBaseDeDatosSlow()
 
     if len(History_Videos)==0:
       self.canvas.create_text(self.x+10,self.y+10,font=('Helvetica', 11, 'bold'), text="Aún no hay vídeos para mostrar")
@@ -2073,13 +2092,8 @@ class history(info):
     if not carpetaGraficas.existeCarpeta:
       carpetaGraficas.crearCarpeta()
     conexionSlow.cursorSlow.execute(f"SELECT GRAFICA FROM DETECCIONYVIDEOS WHERE IDVIDEO={idVideo}")
-    self.graficaPath = f"Graficas\\GraficaVideo-{idVideo}.png"
-    '''
-    r = conexionSlow.cursorSlow.fetchone()[0]
-    graficaBinaria = str(r).strip()
-    graficaImagenBin = Imagenes.ImagenHexaDecimalStr(graficaBinaria)
-    graficaImagenBin.aImagen(self.graficaPath)
-    '''
+    self.graficaPath = str(conexionSlow.cursorSlow.fetchone()[0])
+    #self.graficaPath = f"Graficas\\GraficaVideo-{idVideo}.png"
     conexionSlow.cerrarBaseDeDatosSlow()
     self.paginaVerGrafica = verGrafica(idVideo,self.graficaPath,master=self.master,app=self)
     self.frame.pack_forget()
@@ -2118,10 +2132,15 @@ class verGrafica(info):
     self.Text=f"Ver Gráfica\nVideo ID:{self.idVideo}"
     self.Title1 = textInter(self.frame,self.Text,30,0.5,0.23)
     self.Title1.create_Tittle()
-
-    self.imgGrafica = ImInter(self.frame,self.graficaPath, 0.495,0.56)
-    self.imgGrafica.sizeImage(488,756)
-    self.imgGrafica.create()
+    try:
+      self.imgGrafica = ImInter(self.frame,self.graficaPath, 0.495,0.56)
+      self.imgGrafica.sizeImage(488,756)
+      self.imgGrafica.create()
+    except FileNotFoundError:
+      self.imgGrafica = ImInter(self.frame,"fileNotFound.png", 0.495,0.56)
+      self.imgGrafica.sizeImage(488,756)
+      self.imgGrafica.create()
+      return messagebox.showerror("Error de Archivos",f"La gráfica del vídeo '{self.idVideo}' ha sido eliminada o se le ha\ncambiado el nombre en la carpeta de archivos.")
 
   def Open_menu(self,event=None):
     global ac
@@ -2226,21 +2245,5 @@ def elUsuario(usuario):
   nombreUsuario = str(nombreUsuario[0][0]+" "+nombreUsuario[0][1]).upper()
   root.title(f"SLOW - USUARIO: {nombreUsuario}")
   tomarInfoUsuario()
-
-  conexionSlow = bD.ConexionBaseDeDatosSlow()
-  if rol=="JEFE":
-    listaPoliciasAsignados = policiasAsignados.split(sep=",")
-    listaPoliciasAsignados.append(idUsuario)
-    videosInicial = []
-    for i in listaPoliciasAsignados:
-      conexionSlow.cursorSlow.execute(f"SELECT * FROM DETECCIONYVIDEOS WHERE IDUSUARIO={i}")
-      videosPolicia = conexionSlow.cursorSlow.fetchall()
-      for j in videosPolicia:
-        videosInicial.append(j)
-    History_Videos = ordenarListaPaquete(videosInicial)
-  else:
-    conexionSlow.cursorSlow.execute(f"SELECT * FROM DETECCIONYVIDEOS WHERE IDUSUARIO={idUsuario}")
-    History_Videos = conexionSlow.cursorSlow.fetchall()
-  conexionSlow.cerrarBaseDeDatosSlow()
   app = App(root)
   root.mainloop()
