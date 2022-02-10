@@ -40,6 +40,6 @@ def escribirTexto(imagenViaBin):
     archivo.write(imagenViaBin)
     archivo.close()
 
-imagenVia = Imagen("vec2.png")
+imagenVia = Imagen("RecursosGraficos\\Avenida.png")
 imagenViaBin = imagenVia.aHexaDecimalStr()
-#escribirTexto(imagenViaBin)
+escribirTexto(imagenViaBin)

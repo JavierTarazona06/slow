@@ -76,6 +76,7 @@ class ConexionBaseDeDatosSlow():
                 CIUDAD VARCHAR (200),
                 DIRECCION TEXT,
                 FECHA DATE,
+                GRAFICA LONGBLOB,
                 PRIMARY KEY (IDVIDEO),
                 CONSTRAINT FK_IDUSUARIO2 FOREIGN KEY (IDUSUARIO) REFERENCES USUARIOS (IDUSUARIO),
                 CONSTRAINT FK_IDVIA FOREIGN KEY (IDVIA) REFERENCES VIAS (IDVIA)

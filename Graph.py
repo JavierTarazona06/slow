@@ -9,21 +9,18 @@ class Graph:
     def __init__(self, *args):
         #Toma argumentos que puede ser la base de datos con el idvideo, idvia y la multa
         #o un objeto de tipo grafica anterior para seguir graficando con datos anteriores
-        if(len(args)==1):
+        if(len(args)==2):
             self.ongoingConstructor(args)
-        else:self.mainConstructor(args)
+        else: self.mainConstructor(args[0])
         
-    def mainConstructor(self,args):
+    def mainConstructor(self,idVideo):
+        self.pathToSaveGraphs = f"Graficas\\GraficaVideo-{idVideo}.png"
         #Si no hay argumentos crea todo desde cero
-        self.idvideo=args[0]
-        self.idusuario=args[1]
-        self.idvia=args[2]
-        self.multa=args[3]
-        
         self.ventana=Tk()
         self.ventana.resizable(False,False)
         self.ventana.title("SLOW - Graficas y Datos")
         self.ventana.iconbitmap("RecursosGraficos\\Logo_Slow_Icon_Map.ico")
+        self.ventana.withdraw()
 
         self.ancho = 1120
         self.alto = 630
@@ -35,16 +32,13 @@ class Graph:
         self.construirFrames()
         
     def ongoingConstructor(self, args):
+        self.pathToSaveGraphs = args[0].pathToSaveGraphs
         #Si hay argumentos agrega los vehículos ya creados y establece el tamaño de ventana facilmente
-        self.idvideo=args[0].idvideo
-        self.idusuario=args[0].idusuario
-        self.idvia=args[0].idvia
-        self.multa=args[0].multa
-        
         self.ventana=Tk()
         self.ventana.resizable(False,False)
         self.ventana.title("SLOW - Graficas y Datos")
         self.ventana.iconbitmap("RecursosGraficos\\Logo_Slow_Icon_Map.ico")
+        self.ventana.withdraw()
         
         self.ancho = args[0].ancho
         self.alto = args[0].alto
@@ -73,7 +67,7 @@ class Graph:
     
     def crearGrafico(self):
         #Crea el grafico con un unico subplot----------------
-        self.grafica = Figure(figsize=((self.ancho*0.65/100),(self.alto/133.8)),dpi=100)
+        self.grafica = Figure(figsize=((self.ancho*0.65/100),(self.alto/133.8)),dpi=118)
         self.area_dibujo = self.grafica.add_subplot(1,1,1)
     
         self.grafica.suptitle('Velocidades de Vehiculos')
@@ -102,18 +96,10 @@ class Graph:
         #Guarda los datos del carro para luego graficarlos y los añade a la tabla----------
         self.carros.append([datos[0],datos[1],datos[2]])
         self.tabla.insert('',END,values=(datos[0],datos[1],datos[2]))
-            
-        #Añadir Funcion para Guardar a la base de datos el carro infractor///
-        #El idvideo,idvia,multa ya están creados en el objeto al inicio ejecutar -> import ConexionBaseDeDatosSlow() as bD
         
-        #conexionSlow = bD.ConexionBaseDeDatosSlow()
-        #conexionSlow.cursorSlow.execute("INSERT INTO VEHICULOS (IDVIDEO,CAPTURA,IDVIA,VELOCIDADEXCEDIDA,MULTA,IDUSUARIO) VALUES ({0},{1},{2},{3},{4},{5})".format(self.idvideo,datos[3],self.idvia,datos[2],self.multa,self.idusuario))
-        
-        #////
-
     def graficarYMostrar(self):
         self.graficar()
-        
+        self.grafica.savefig(self.pathToSaveGraphs)
        #Añade y empaqueta los frames------------
         self.frame1.grid(row=0,column=0)
         self.tabla['show'] = 'headings'
@@ -134,7 +120,7 @@ class Graph:
     def graficar(self):
         #Grafica todos los carros guardados hasta ahora con una distancia entre datos fija-------
         distancia=(self.DURACION/len(self.carros))
-        for i in range(len(self.carros)-1):
+        for i in range(len(self.carros)):
             #Escoge un color aleatorio para cada carro
             col = "#%06x" % random.randint(0, 0xFFFFFF)
             self.area_dibujo.plot([0,self.DURACION],[self.carros[i][1],self.carros[i][1]], color=col)
