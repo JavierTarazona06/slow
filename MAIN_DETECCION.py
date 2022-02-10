@@ -1,29 +1,47 @@
-from tkinter import *
-from tkinter import filedialog
 import cv2
 import numpy as np
+from ArchivosYCarpetas import Carpeta
+from Imagenes import Imagen
 from Localizador_ob import *
 import time
 import pyscreenshot
 import Graph as gp
+import ConexionBaseDeDatosSlow as bD
 
 class Grafico_muestra:
 
-    def _init_(self, idvideo, idusuario, idvias, multa):
-        self.idVideo= idvideo
+    def __init__ (self,idusuario, idvia, multa, ciudad, direccion, path):
+        self.idVideo = 0
         self.idUsuario = idusuario
-        self.idVias = idvias
+        self.idVias = idvia
         self.multa = multa
+        self.ciudad = ciudad
+        self.direccion = direccion
+        self.video = path
+        conexionSlow = bD.ConexionBaseDeDatosSlow()
+        conexionSlow.cursorSlow.execute(f'''INSERT INTO DETECCIONYVIDEOS (IDUSUARIO,VIDEO,IDVIA,CIUDAD,DIRECCION,FECHA)
+        VALUES ({self.idUsuario},'CAMBIO',{self.idVias},'{self.ciudad}','{self.direccion}',CURDATE())''')
+        conexionSlow.cursorSlow.execute("SELECT IDVIDEO FROM DETECCIONYVIDEOS WHERE VIDEO='CAMBIO'")
+        self.idVideo = conexionSlow.cursorSlow.fetchone()[0]
+        carpetaVideos = Carpeta("Videos")
+        if not carpetaVideos.existeCarpeta:
+            carpetaVideos.crearCarpeta
+        self.videoN = f"video-{self.idVideo}.mp4"
+        carpetaVideos.copiarArchivo(self.video,self.videoN)
+        conexionSlow.cursorSlow.execute(f"UPDATE DETECCIONYVIDEOS SET VIDEO='Videos\\\{self.videoN}' WHERE IDVIDEO={self.idVideo}")
+        conexionSlow.cursorSlow.execute(f"SELECT LIMITEVELOCIDAD FROM VIAS WHERE IDVIA={self.idVias}")
+        self.limiteVelocidad = float(conexionSlow.cursorSlow.fetchone()[0])
 
-        ventana = Tk()
-        Button(ventana, text="Abrir video a detectar", command=self.abrirVideo).pack()
-        ventana.mainloop()
+        carpetaCapturas = Carpeta("Capturas")
+        if not carpetaCapturas.existeCarpeta:
+            carpetaCapturas.crearCarpeta()
 
+        conexionSlow.cerrarBaseDeDatosSlow()
 
     def abrirVideo(self):
         seguimiento = Localizador_ob()
-        self.grafic = gp.Graph(self.idVideo, self.idUsuario, self.idVias, self.multa)
-        video = filedialog.askopenfilename(title="ABRIR VIDEO PARA DETECCIÓN")  # aqui se guarda el path del video
+        self.grafic = gp.Graph(self.idVideo)
+        video = self.video  # aqui se guarda el path del video
         print(video)
         lecturaVideo = cv2.VideoCapture(video)
 
@@ -139,11 +157,9 @@ class Grafico_muestra:
 
                             vel = 24.5 / car0[id]
                             vel *= 3.6
-                            if vel > 60:
+                            if vel > self.limiteVelocidad:
                                 captura_pantalla = True
                                 color = 0, 0, 255
-
-
                             else:
                                 infractor = False
                                 color = 0, 255, 0
@@ -152,10 +168,23 @@ class Grafico_muestra:
                         if id in velocidades:
                             if velocidades[id][3] == 0:
                                 imagen = pyscreenshot.grab()
-                                imagen.save(f"Infractor_{str(id)}.png")
-                                velocidades[id][3] = f"Infractor_{str(id)}.png"
-                                #SEe pasan los datos de la gráfica
+                                imagen.save(f"Capturas\\Infractor_{str(id)}.png")
+                                velocidades[id][3] = f"Capturas\\Infractor_{str(id)}.png"
+                                #Se pasan los datos a la grafica y a la base de datos
                                 self.grafic.guardarCarros(grafica)
+                                #Poner Correctamente
+                                if velocidades[id][2]:
+                                    capturaPath = velocidades[id][3]
+                                    capturaImagen = Imagen(capturaPath)
+                                    capturaBinaria = capturaImagen.aHexaDecimalStr()
+                                    conexionSlow = bD.ConexionBaseDeDatosSlow()
+                                    conexionSlow.cursorSlow.execute(f'''INSERT INTO VEHICULOS 
+                                    (IDVIDEO,CAPTURA,TIPOVEHICULO,PLACA,
+                                    VELOCIDAD,IDVIA,VELOCIDADEXCEDIDA,MULTA,IDUSUARIO) 
+                                    VALUES ({self.idVideo},'{capturaBinaria}','POR DEFINIR','POR DEFI',{velocidades[id][1]},
+                                    {self.idVias},{velocidades[id][2]},{self.multa},{self.idUsuario})''')
+                                    conexionSlow.cerrarBaseDeDatosSlow()
+        
 
                         else:
                             #bbox = (x, y, x + ancho, y + alto)
@@ -184,8 +213,10 @@ class Grafico_muestra:
         lecturaVideo.release()
         cv2.destroyAllWindows()
 
-    def envento_boton(self):
+    def evento_boton(self):
+        self.grafic.ventana.deiconify()
         self.grafic.graficarYMostrar()
-        self.grafic = gp.Graph(self.grafic)
-
-Grafico_muestra(1, 2, 3 ,4)
+        self.grafic = gp.Graph(self.grafic,self.idVideo)
+        conexionSlow = bD.ConexionBaseDeDatosSlow()
+        conexionSlow.cursorSlow.execute(f"UPDATE DETECCIONYVIDEOS SET GRAFICA='{self.grafic.pathToSaveGraphs}' WHERE IDVIDEO={self.idVideo}")
+        conexionSlow.cerrarBaseDeDatosSlow()

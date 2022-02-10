@@ -105,4 +105,17 @@ def ej4():
 
     root.mainloop()
 
-ej4()
+def ej5():
+    ventanaGrafica = Tk()
+    ventanaGrafica.title("GraficaVideo-ID:5")
+    ventanaGrafica.iconbitmap("RecursosGraficos\\Logo_Slow_Icon_Map.ico")
+    ventanaGrafica.config(bg="white")
+    ventanaGrafica.resizable(False,False)
+
+    base = Frame(ventanaGrafica, bg="white").pack()
+
+    imgGrafica = PhotoImage(file="Graficas\\GraficaVideo-1.png")
+    labelImgGrafica = Label(base, image=imgGrafica, bg="white")
+    labelImgGrafica.pack()
+
+    ventanaGrafica.update()

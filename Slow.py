@@ -2,14 +2,12 @@ from tkinter import *
 from tkinter import filedialog
 from tkinter import ttk
 from PIL import ImageTk, Image
-import cv2
+import cv2, windnd, imutils
 from functools import partial
-import imutils
 import ConexionBaseDeDatosSlow as bD
 import Imagenes, ArchivosYCarpetas, os
 from tkinter import messagebox
-import windnd
-
+import MAIN_DETECCION as Deteccion
 
 # interfaz principal
 class App:
@@ -795,11 +793,23 @@ class video(info):
     self.entradaViaParaDeteccion.place(relx = 0.44,rely=0.28,anchor ='w')
     self.entradaViaParaDeteccion.bind("<Return>",self.viaSeleccionadaE)
 
+    self.TitleCiudad = textInter(self.frame,"Ciudad:",16,0.28,0.34,'w')
+    self.TitleCiudad.create_Tittle()
+    self.Ciudad = StringVar()
+    self.entradaCiudad = Entry(self.frame,textvariable=self.Ciudad,width=15, font = ('comics Sans MS',18))
+    self.entradaCiudad.place(relx = 0.34,rely=0.34,anchor ='w')
+
+    self.TitleDireccion = textInter(self.frame,"Dirección:",16,0.5,0.34,'w')
+    self.TitleDireccion.create_Tittle()
+    self.Direccion = StringVar()
+    self.entradaDireccion = Entry(self.frame,textvariable=self.Direccion,width=15, font = ('comics Sans MS',18))
+    self.entradaDireccion.place(relx = 0.58,rely=0.34,anchor ='w')
+
     self.ButtonPuedeSubirVideo = BottInter(self.frame,"SeleccionarVia.png",0.65,0.28,None, self.viaSeleccionada)
     self.ButtonPuedeSubirVideo.modzise(180,45)
     self.ButtonPuedeSubirVideo.create()
 
-    self.imagenDrag = ImInter(self.frame,"Upload.png", 0.51,0.53) 
+    self.imagenDrag = ImInter(self.frame,"Upload.png", 0.51,0.57) 
     self.imagenDrag.sizeImage(250,300)
     self.imagenDrag.create()
 
@@ -811,12 +821,11 @@ class video(info):
     if len(idVia)==0:
       if (self.widgetscreados):
         self.Button_file.panel.destroy()
-        self.Button_life.panel.destroy()
         self.paragraph1.panel.destroy()
         self.idViaVideo = -1
         self.widgetscreados = False
       return messagebox.showerror("Error al ingresar información",f"La vía ingresada {viaActual} no existe")
-    self.idViaVideo = idVia[0]
+    self.idViaVideo = idVia[0][0]
     self.crearWidgetsSubirVideo()
 
   def viaSeleccionada(self):
@@ -827,25 +836,20 @@ class video(info):
     if len(idVia)==0:
       if (self.widgetscreados):
         self.Button_file.panel.destroy()
-        self.Button_life.panel.destroy()
         self.paragraph1.panel.destroy()
         self.idViaVideo = -1
         self.widgetscreados = False
       return messagebox.showerror("Error al ingresar información",f"La vía ingresada {viaActual} no existe")
-    self.idViaVideo = idVia[0]
+    self.idViaVideo = idVia[0][0]
     self.crearWidgetsSubirVideo()
   
   def crearWidgetsSubirVideo(self):
-    self.Button_file = BottInter(self.frame,"Boton.png",0.33,0.78,None,self.Open_File)
+    self.Button_file = BottInter(self.frame,"Boton.png",0.5,0.78,None,self.Open_File)
     self.Button_file.modzise(370,60)
     self.Button_file.create()
 
-    self.Button_life = BottInter(self.frame,"Boton_life.png",0.67,0.78,None)
-    self.Button_life.modzise(370,60)
-    self.Button_life.create()
-
     self.Text="A continuación puede registrar el video arrastrándolo o seleccionándolo desde la carpeta"
-    self.paragraph1 = textInter(self.frame,self.Text,16,0.5,0.36)
+    self.paragraph1 = textInter(self.frame,self.Text,16,0.5,0.4)
     self.paragraph1.create_paragraph()
 
     if not self.widgetArrastre:
@@ -855,33 +859,41 @@ class video(info):
 
   def dragged_files(self,files):
     self.File = '\n'.join((item.decode('gbk') for item in files))
-
-    if (self.File.endswith('.mp4')or self.File.endswith('.avi')):
+    if (self.File.endswith('.mp4')):
         if self.idViaVideo == -1:
           return messagebox.showerror("Error al ingresar la información","La vía ingresada no existe")
+        if (self.Ciudad.get()=="") or (self.Direccion.get() ==""):
+          return messagebox.showerror("Error al ingresar la información","Complete todos los campos")
         else:
-          self.make_page_detection()
+          self.make_page_detection(self.idViaVideo,idUsuario,self.File,self.Ciudad.get(),self.Direccion.get())
 
   def Open_File(self):
-    self.File= filedialog.askopenfile(title="Abrir Archivo",initialdir="C:/",
-    filetypes=(("MP4 video","*.mp4"),
-    ("Windows video file (avi)","*.avi"),("Todos los Archivos","*.*")))
+    self.File= filedialog.askopenfile(title="Abrir Archivo",initialdir="C:/",filetypes=(("MP4 video","*.mp4"),))
+    self.File = str(self.File)
+    startPath = self.File.find("'")
+    endPath = self.File.find("'",startPath+1)
+    self.File = self.File[startPath+1:endPath]
 
     if bool(self.File)!=0:  
       if self.idViaVideo == -1:
         return messagebox.showerror("Error al ingresar la información","La vía ingresada no existe")
+      if (self.Ciudad.get()=="") or (self.Direccion.get() ==""):
+        return messagebox.showerror("Error al ingresar la información","Complete todos los campos")
       else:
-        self.make_page_detection()       
+        self.make_page_detection(self.idViaVideo,idUsuario,self.File,self.Ciudad.get(),self.Direccion.get())       
     
   
-  def make_page_detection(self):
-    self.page_detection = detection(self.File,master=self.master, app=self)
-    
+  def make_page_detection(self,idVia,idUsuario,videoPath,ciudad,direccion):
+    conexionSlow = bD.ConexionBaseDeDatosSlow()
+    conexionSlow.cursorSlow.execute(f"SELECT MULTA FROM VIAS WHERE IDVIA={idVia}")
+    multa = conexionSlow.cursorSlow.fetchone()[0]
+    conexionSlow.cerrarBaseDeDatosSlow()
+
+    self.deteccion = Deteccion.Grafico_muestra(idUsuario,idVia,multa,ciudad,direccion,videoPath)
+    self.page_detection = detection(self.File,self.deteccion,master=self.master, app=self)
     self.frame.pack_forget()
     self.page_detection.start_page()
-
-    import MainPruebaGraph
-    MainPruebaGraph.main()
+    self.deteccion.abrirVideo()
 
   def Open_menu(self,event=None):
     global ac
@@ -1179,49 +1191,48 @@ class Vehiculos(info):
 
 # deteccion
 class detection(info):
+  def __init__(self,video, deteccion,master=None, app=None):
+    self.video=video
+    self.deteccion = deteccion
+    super().__init__(master, app)
+
   def own_widgets(self):
     self.inDate = ImInter(self.frame,"deteccionimage.png", 0.82,0.06)
     self.inDate.sizeImage(80,120)
     self.inDate.create()
 
+    self.TitleVideoSubido = textInter(self.frame,f"Video Subido\nID:{self.deteccion.idVideo}",20,0.44,0.3,'w')
+    self.TitleVideoSubido.create_Tittle()
+
+    self.imgVideoSubido = ImInter(self.frame,"videoSubido.png", 0.49,0.49)
+    self.imgVideoSubido.sizeImage(240,253)
+    self.imgVideoSubido.create()
+
     self.police = ImInter(self.frame,f"{imagenPerfilPath}", 0.2,0.1) 
     self.police.sizeImage(100,100)
     self.police.create()
-
+    '''
     self.BottGuardar = BottInter(self.frame,"GuardarBoton.png",0.5,0.8, None,None)
     self.BottGuardar.modzise(190,60)
     self.BottGuardar.create()
+    '''
 
-    self.create_botton_velo(0.5) 
+    self.create_botton_velo(0.5)
 
   def create_botton_velo(self,positionx):
 
     self.positionx=positionx
-    self.Bottvelo2 = BottInter(self.frame,"velocidadPromedio.png",self.positionx, 0.63,
-    'Velocidad promedio',self.make_page_graficas2)
+    self.Bottvelo2 = BottInter(self.frame,"velocidadPromedio.png",self.positionx, 0.68,
+    'Velocidad promedio',self.deteccion.evento_boton)
     self.Bottvelo2.modzise(50,50)
     self.Bottvelo2.create()
     
     self.open_create_text(self.Bottvelo2)
 
-  def make_page_graficas(self):
-    self.page_graficas = Graficas(master=self.master, app=self)
-    self.frame.pack_forget()
-    self.page_graficas.start_page()
-
-  def make_page_graficas2(self):
-    self.page_graficas2 = Graficas2(master=self.master, app=self)
-    self.frame.pack_forget()
-    self.page_graficas2.start_page()
-
   def open_create_text(self,botton):
     
     self.botton=botton
     self.botton.createText()
-
-  def __init__(self,video,master=None,app=None):
-    self.video=video
-    super().__init__(master,app)
   
   def Open_menu(self,event=None):
     global ac
@@ -1950,7 +1961,7 @@ class VidInter(ImInter):
   def create(self):
     self.ret, self.frame2 = self.cap.read()
     if self.ret:
-      self.frame2 = imutils.resize(self.frame2, width=440)
+      self.frame2 = imutils.resize(self.frame2, height=215)
       self.frame2 = cv2.cvtColor(self.frame2, cv2.COLOR_BGR2RGB)
 
       self.im = Image.fromarray(self.frame2)
@@ -1958,8 +1969,6 @@ class VidInter(ImInter):
 
       self.panel.configure( image = self.img)
       self.panel.image = self.img
-    
-
 
     if self.run:
       self.panel.after(1, self.create)
@@ -1976,7 +1985,7 @@ class VidInter(ImInter):
       self.run = True
       for x in range(len(History_Videos)):
         global id
-        if (History_Videos[x][0]==id and x!= self.variable):
+        if (x!= self.variable):
           globals()["video" + str(x)].pausar_otros_videos()
           
       self.panel.after(1, self.create)
@@ -2024,7 +2033,7 @@ class history(info):
         self.videoPath = History_Videos[x][2]
         globals()["video" + str(self.contador)] = VidInter(self.frame,self.videoPath,self.x,self.y,self.canvas,self.contador,self)
           
-        globals()["button_detection" + str(self.contador)]= BottInter(self.canvas,"Video Speed Icon.png",0.5,0.8,'',partial(self.make_page_detection,self.videoPath))
+        globals()["button_detection" + str(self.contador)]= BottInter(self.canvas,"Video Speed Icon.png",0.5,0.8,'',partial(self.verGrafica,self.IdVideo))
         globals()["button_detection" + str(x)].modzise(95,50)
         globals()["button_detection" + str(x)].create()
         self.window= globals()["button_detection" + str(x)].return_panel()
@@ -2058,11 +2067,23 @@ class history(info):
     
     self.scrollbar.configure(command= self.canvas.yview )
 
-  def make_page_detection(self,name_video):
-    self.name_video_detection= name_video
-    self.page_detection = detection(self.name_video_detection, master=self.master, app=self)
+  def verGrafica(self,idVideo):
+    conexionSlow = bD.ConexionBaseDeDatosSlow()
+    carpetaGraficas = ArchivosYCarpetas.Carpeta("Graficas")
+    if not carpetaGraficas.existeCarpeta:
+      carpetaGraficas.crearCarpeta()
+    conexionSlow.cursorSlow.execute(f"SELECT GRAFICA FROM DETECCIONYVIDEOS WHERE IDVIDEO={idVideo}")
+    self.graficaPath = f"Graficas\\GraficaVideo-{idVideo}.png"
+    '''
+    r = conexionSlow.cursorSlow.fetchone()[0]
+    graficaBinaria = str(r).strip()
+    graficaImagenBin = Imagenes.ImagenHexaDecimalStr(graficaBinaria)
+    graficaImagenBin.aImagen(self.graficaPath)
+    '''
+    conexionSlow.cerrarBaseDeDatosSlow()
+    self.paginaVerGrafica = verGrafica(idVideo,self.graficaPath,master=self.master,app=self)
     self.frame.pack_forget()
-    self.page_detection.start_page()
+    self.paginaVerGrafica.start_page()
     
   
   def create_video(self):
@@ -2081,6 +2102,42 @@ class history(info):
     
       self.Menu.start_page()
       ac=True
+
+class verGrafica(info):
+
+  def __init__(self,idVideo,graficaPath, master=None, app=None):
+      self.idVideo = idVideo
+      self.graficaPath = graficaPath
+      super().__init__(master, app)
+  
+  def own_widgets(self):
+    self.iminfo= ImInter(self.frame,"History Icon.png", 0.82,0.06) 
+    self.iminfo.sizeImage(80,80)
+    self.iminfo.create()
+
+    self.Text=f"Ver Gráfica\nVideo ID:{self.idVideo}"
+    self.Title1 = textInter(self.frame,self.Text,30,0.5,0.23)
+    self.Title1.create_Tittle()
+
+    self.imgGrafica = ImInter(self.frame,self.graficaPath, 0.495,0.56)
+    self.imgGrafica.sizeImage(488,756)
+    self.imgGrafica.create()
+
+  def Open_menu(self,event=None):
+    global ac
+    self.name="history"
+    self.Menu = menu(self.name,root=self.frame, app=self)
+    if (ac==False):
+      self.Menu.start_page()
+      ac=True
+  
+  def go_back(self):
+    global ac
+    ac=False
+    self.frame.pack_forget()
+    self.paginaAnterior = history()
+    self.frame.pack_forget()
+    self.paginaAnterior.start_page()
 
 #Datos
 
@@ -2185,15 +2242,5 @@ def elUsuario(usuario):
     conexionSlow.cursorSlow.execute(f"SELECT * FROM DETECCIONYVIDEOS WHERE IDUSUARIO={idUsuario}")
     History_Videos = conexionSlow.cursorSlow.fetchall()
   conexionSlow.cerrarBaseDeDatosSlow()
-  '''
-  History_Videos =  [(1,1,"Videos\\video-1.mp4",3,"Bogotá D.C","km 7 - Tunja","10/10/2021"),
-                    (1,1,"Videos\\video-1.mp4",3,"Bogotá D.C","km 7 - Tunja","11/10/2021"),
-                    (1,1,"Videos\\video-1.mp4",3,"Bogotá D.C","km 7 - Tunja","12/10/2021"),
-                    (1,1,"Videos\\video-1.mp4",3,"Bogotá D.C","km 7 - Tunja","13/10/2021"),
-                    (1,1,"Videos\\video-1.mp4",3,"Bogotá D.C","km 7 - Tunja","14/10/2021"),
-                    ]
-  '''
   app = App(root)
   root.mainloop()
-
-elUsuario(1)
