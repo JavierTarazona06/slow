@@ -1,0 +1,51 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Local environment and secrets
+.env
+.env.*
+config/database.txt
+!config/database.example.txt
+
+# Build and packaging artifacts
+build/
+dist/
+*.egg-info/
+*.manifest
+*.spec
+!config/pyinstaller/*.spec
+
+# Runtime/generated application outputs
+outputs/
+Capturas/
+Graficas/
+Videos/
+archivotexto.txt
+
+# Legacy local configuration name
+conexionSlowDataBase.txt
+
+# OS/editor metadata
+.DS_Store
+Thumbs.db
+desktop.ini
+archive/os-metadata/
+
+# Logs and temporary files
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
+
