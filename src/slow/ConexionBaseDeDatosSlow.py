@@ -1,4 +1,53 @@
+from __future__ import annotations
+
+from dataclasses import dataclass
+from pathlib import Path
+import os
+
 import pymysql
+
+from .paths import CONFIG_DIR
+
+
+@dataclass(frozen=True)
+class DatabaseSettings:
+    host: str = "localhost"
+    port: int = 3306
+    user: str = "root"
+    password: str = "root"
+    db: str = "slow"
+
+
+def _clean_config_value(value: str) -> str:
+    return value.strip().strip(",").strip('"').strip("'")
+
+
+def load_database_settings(config_path: Path = CONFIG_DIR / "database.txt") -> DatabaseSettings:
+    """Load database settings from environment variables or config/database.txt."""
+    values = {
+        "host": os.getenv("SLOW_DB_HOST"),
+        "port": os.getenv("SLOW_DB_PORT"),
+        "user": os.getenv("SLOW_DB_USER"),
+        "password": os.getenv("SLOW_DB_PASSWORD"),
+        "db": os.getenv("SLOW_DB_NAME"),
+    }
+
+    if config_path.exists():
+        for line in config_path.read_text(encoding="utf-8").splitlines():
+            if "=" not in line or line.strip().startswith("#"):
+                continue
+            key, value = line.split("=", 1)
+            key = key.strip()
+            if key in values and values[key] is None:
+                values[key] = _clean_config_value(value)
+
+    return DatabaseSettings(
+        host=values["host"] or "localhost",
+        port=int(values["port"] or 3306),
+        user=values["user"] or "root",
+        password=values["password"] or "root",
+        db=values["db"] or "slow",
+    )
 
 class ConexionBaseDeDatosSlow():
     '''
@@ -16,12 +65,13 @@ class ConexionBaseDeDatosSlow():
         print("BD: Slow conectada")
 
     def abrirBasedeDatosSlow(self):
+        settings = load_database_settings()
         self.conexionSlow = pymysql.connect(
-            host="localhost",
-            port=3306,
-            user="root",
-            password="root",
-            db="slow"
+            host=settings.host,
+            port=settings.port,
+            user=settings.user,
+            password=settings.password,
+            db=settings.db
         )
         self.cursorSlow = self.conexionSlow.cursor()
         print("BBDD: Slow Abierta Exitosamente")
@@ -36,7 +86,7 @@ class ConexionBaseDeDatosSlow():
             self.cursorSlow.execute(f"DROP TABLE {tabla}")
 
     def crearTablaUsuarios(self):
-        self.cursorSlow.execute = ('''
+        self.cursorSlow.execute('''
             CREATE TABLE IF NOT EXISTS USUARIOS (
             IDUSUARIO INT AUTO_INCREMENT,
             USUARIO VARCHAR(200) UNIQUE,
@@ -128,6 +178,7 @@ class ConexionBaseDeDatosSlow():
         self.abrirBasedeDatosSlow()
 
 def main():
+    """Create the SLOW database tables."""
     conexionSlow = ConexionBaseDeDatosSlow()
     print(conexionSlow)
     conexionSlow.crearTablaUsuarios()
@@ -136,4 +187,5 @@ def main():
     conexionSlow.crearTablaVehiculos()
     conexionSlow.cerrarBaseDeDatosSlow()
 
-main()
+if __name__ == "__main__":
+    main()

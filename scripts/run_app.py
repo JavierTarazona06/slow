@@ -44,16 +44,28 @@ def main() -> int:
         else:
             print("Install pip dependencies with: pip install -r requirements.txt", file=sys.stderr)
         return 1
-    except KeyboardInterrupt:
-        print("\nSLOW application interrupted by user.")
-        return 130
-    except Exception:
+    except Exception as exc:
+        if _looks_like_mysql_connection_error(exc):
+            print("Startup failed: SLOW could not connect to MySQL.", file=sys.stderr)
+            print("Quick start with Docker:", file=sys.stderr)
+            print("  docker compose up -d mysql", file=sys.stderr)
+            print("  python3 scripts/init_database.py", file=sys.stderr)
+            print("  python3 scripts/run_app.py", file=sys.stderr)
+            return 1
         print("SLOW application stopped because of an unexpected error.", file=sys.stderr)
         traceback.print_exc()
         return 1
+    except KeyboardInterrupt:
+        print("\nSLOW application interrupted by user.")
+        return 130
 
     print("SLOW application closed.")
     return 0
+
+
+def _looks_like_mysql_connection_error(exc: Exception) -> bool:
+    """Return True when an exception appears to be a PyMySQL connection failure."""
+    return exc.__class__.__name__ == "OperationalError" and "MySQL" in str(exc)
 
 
 if __name__ == "__main__":

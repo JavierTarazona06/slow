@@ -20,6 +20,18 @@ Then install the pip dependencies:
 pip install -r requirements.txt
 ```
 
+Start MySQL with Docker:
+
+```bash
+docker compose up -d mysql
+```
+
+Initialize the database tables:
+
+```bash
+python3 scripts/init_database.py
+```
+
 Run the app:
 
 ```bash
@@ -41,4 +53,12 @@ The launcher adds `src/` to `PYTHONPATH` and starts `slow.main`.
 
 ## Notes
 
-This app expects a local MySQL database named `slow`.
+This app expects a local MySQL database named `slow`. The fastest setup is the included Docker Compose service, which exposes MySQL on `localhost:3306` with user `root`, password `root`, and database `slow`.
+
+Local database credentials can be customized with `config/database.txt` or these environment variables:
+
+- `SLOW_DB_HOST`
+- `SLOW_DB_PORT`
+- `SLOW_DB_USER`
+- `SLOW_DB_PASSWORD`
+- `SLOW_DB_NAME`
