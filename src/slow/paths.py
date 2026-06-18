@@ -1,10 +1,20 @@
 from pathlib import Path
+import sys
 
-PACKAGE_DIR = Path(__file__).resolve().parent
-SRC_DIR = PACKAGE_DIR.parent
-PROJECT_ROOT = SRC_DIR.parent
+IS_FROZEN = getattr(sys, "frozen", False)
 
-ASSETS_DIR = PROJECT_ROOT / "assets"
+if IS_FROZEN:
+    BUNDLE_ROOT = Path(getattr(sys, "_MEIPASS")).resolve()
+    PROJECT_ROOT = Path(sys.executable).resolve().parent
+    PACKAGE_DIR = BUNDLE_ROOT / "slow"
+    SRC_DIR = BUNDLE_ROOT
+else:
+    PACKAGE_DIR = Path(__file__).resolve().parent
+    SRC_DIR = PACKAGE_DIR.parent
+    PROJECT_ROOT = SRC_DIR.parent
+    BUNDLE_ROOT = PROJECT_ROOT
+
+ASSETS_DIR = BUNDLE_ROOT / "assets"
 UI_ASSETS_DIR = ASSETS_DIR / "graphics" / "ui"
 RESOURCE_ASSETS_DIR = ASSETS_DIR / "graphics" / "resources"
 SAMPLE_VIDEOS_DIR = ASSETS_DIR / "videos" / "samples"

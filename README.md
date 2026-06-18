@@ -40,6 +40,22 @@ python3 scripts/run_app.py
 
 The launcher adds `src/` to `PYTHONPATH` and starts `slow.main`.
 
+## Build Executable
+
+Install the build dependencies:
+
+```bash
+pip install -r requirements-dev.txt
+```
+
+Build the executable with PyInstaller:
+
+```bash
+python3 scripts/build_executable.py
+```
+
+The generated executable is written to `dist/`. Temporary PyInstaller files are written to `build/pyinstaller/`. Both locations are ignored by Git.
+
 ## Project Layout
 
 - `src/slow/` - application source code

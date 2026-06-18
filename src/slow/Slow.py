@@ -2,7 +2,11 @@ from tkinter import *
 from tkinter import filedialog
 from tkinter import ttk
 from PIL import ImageTk, Image
-import cv2, windnd, imutils
+import cv2, imutils
+try:
+  import windnd
+except ImportError:
+  windnd = None
 from functools import partial
 from . import ConexionBaseDeDatosSlow as bD
 from . import Imagenes, ArchivosYCarpetas
@@ -868,7 +872,7 @@ class video(info):
     self.paragraph1 = textInter(self.frame,self.Text,16,0.5,0.4)
     self.paragraph1.create_paragraph()
 
-    if not self.widgetArrastre:
+    if windnd is not None and not self.widgetArrastre:
       windnd.hook_dropfiles(self.frame, func=self.dragged_files)
       self.widgetArrastre = True
     self.widgetscreados = True
