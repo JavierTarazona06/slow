@@ -1,80 +1,156 @@
 # SLOW
 
-SLOW is a Python/Tkinter desktop application for vehicle-speed detection, record keeping, and graph visualization.
+SLOW is a Python desktop application for vehicle-speed detection, evidence capture, record management, and graph visualization. It uses Tkinter for the interface, OpenCV for video processing, Matplotlib for graphs, and MySQL for persistent data.
 
-## Run
+## Main Features
 
-From the project root:
+- User login and account management.
+- Vehicle-speed detection from uploaded videos.
+- Evidence capture for detected infractions.
+- Vehicle and road record management.
+- Historical video and graph visualization.
+- MySQL-backed data storage.
+- PyInstaller-based executable generation.
 
-Tkinter is required for the desktop UI. It is a system package, not a pip dependency, so it is intentionally not listed in `requirements.txt`.
+## Requirements
 
-On Ubuntu/Debian:
+- Python 3.10 or newer.
+- Tkinter system package.
+- MySQL server, or Docker for the included MySQL service.
+- Pip packages listed in `requirements.txt`.
+- For executable builds: packages listed in `requirements-dev.txt`.
+
+Tkinter is not installed with `pip`. On Ubuntu/Debian, install it with:
 
 ```bash
 sudo apt install python3-tk
 ```
 
-Then install the pip dependencies:
+## Installation
+
+From the project root, create and activate a virtual environment:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+Install runtime dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Start MySQL with Docker:
+Start the included MySQL service:
 
 ```bash
 docker compose up -d mysql
 ```
 
-Initialize the database tables:
+Initialize the database schema:
 
 ```bash
 python3 scripts/init_database.py
 ```
 
-Run the app:
+## Run From Source
+
+Run the application with:
 
 ```bash
 python3 scripts/run_app.py
 ```
 
-The launcher adds `src/` to `PYTHONPATH` and starts `slow.main`.
+The launcher prepares the local `src/` import path and starts `slow.main`.
 
-## Build Executable
+## Generate The Executable
 
-Install the build dependencies:
+Install build dependencies:
 
 ```bash
 pip install -r requirements-dev.txt
 ```
 
-Build the executable with PyInstaller:
+Build the executable:
 
 ```bash
 python3 scripts/build_executable.py
 ```
 
-The generated executable is written to `dist/`. Temporary PyInstaller files are written to `build/pyinstaller/`. Both locations are ignored by Git.
+The executable is generated in `dist/`. Temporary PyInstaller files are generated in `build/pyinstaller/`. Both folders are ignored by Git.
 
-## Project Layout
+## Run The Executable
 
-- `src/slow/` - application source code
-- `scripts/` - runnable scripts, including `scripts/run_app.py`
-- `assets/` - bundled static images, icons, and sample videos
-- `config/` - configuration and build specs
-- `outputs/` - generated/runtime files such as uploaded videos, captures, graphs, and extracted DB images
-- `build/` - generated build artifacts
-- `docs/` - project documentation
-- `archive/` - legacy or preserved files that are not part of the active runtime
+Make sure MySQL is running first:
 
-## Notes
+```bash
+docker compose up -d mysql
+```
 
-This app expects a local MySQL database named `slow`. The fastest setup is the included Docker Compose service, which exposes MySQL on `localhost:3306` with user `root`, password `root`, and database `slow`.
+Then run the generated executable from `dist/`.
 
-Local database credentials can be customized with `config/database.txt` or these environment variables:
+On Linux:
+
+```bash
+./dist/slow
+```
+
+On Windows, run:
+
+```powershell
+.\dist\slow.exe
+```
+
+If you use custom database settings, place a local `config/database.txt` next to the project during development, or set these environment variables before launching the executable:
 
 - `SLOW_DB_HOST`
 - `SLOW_DB_PORT`
 - `SLOW_DB_USER`
 - `SLOW_DB_PASSWORD`
 - `SLOW_DB_NAME`
+
+## Project Structure
+
+```text
+.
+├── assets/              # Bundled images, icons, and sample videos
+├── config/              # Local config templates and PyInstaller spec
+├── docs/                # Documentation
+├── outputs/             # Runtime-generated files
+├── scripts/             # Entry-point, setup, and build scripts
+├── src/slow/            # Application source code
+├── docker-compose.yml   # MySQL service for local development
+├── requirements.txt     # Runtime Python dependencies
+└── requirements-dev.txt # Build/development dependencies
+```
+
+## Notes And Troubleshooting
+
+### MySQL Connection Refused
+
+If you see an error like `Can't connect to MySQL server on 'localhost'`, start MySQL and initialize the schema:
+
+```bash
+docker compose up -d mysql
+python3 scripts/init_database.py
+```
+
+### Missing Tkinter
+
+If Python cannot import `tkinter`, install the system package:
+
+```bash
+sudo apt install python3-tk
+```
+
+### Missing PyInstaller
+
+If executable generation fails because PyInstaller is missing, install build dependencies:
+
+```bash
+pip install -r requirements-dev.txt
+```
+
+### Generated Files
+
+Runtime outputs, build artifacts, virtual environments, local database credentials, and OS metadata are ignored by Git through `.gitignore`.
