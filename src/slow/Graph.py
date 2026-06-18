@@ -3,6 +3,7 @@ from tkinter import *
 from tkinter import ttk
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
+from .paths import graph_path, path_string, resource_path_string
 
 class Graph:
     
@@ -14,12 +15,12 @@ class Graph:
         else: self.mainConstructor(args[0])
         
     def mainConstructor(self,idVideo):
-        self.pathToSaveGraphs = f"Graficas\\\GraficaVideo-{idVideo}.png"
+        self.pathToSaveGraphs = path_string(graph_path(f"GraficaVideo-{idVideo}.png"))
         #Si no hay argumentos crea todo desde cero
         self.ventana=Tk()
         self.ventana.resizable(False,False)
         self.ventana.title("SLOW - Graficas y Datos")
-        self.ventana.iconbitmap("RecursosGraficos\\Logo_Slow_Icon_Map.ico")
+        self.ventana.iconbitmap(resource_path_string("Logo_Slow_Icon_Map.ico"))
         self.ventana.withdraw()
 
         self.ancho = 1120
@@ -37,7 +38,7 @@ class Graph:
         self.ventana=Tk()
         self.ventana.resizable(False,False)
         self.ventana.title("SLOW - Graficas y Datos")
-        self.ventana.iconbitmap("RecursosGraficos\\Logo_Slow_Icon_Map.ico")
+        self.ventana.iconbitmap(resource_path_string("Logo_Slow_Icon_Map.ico"))
         self.ventana.withdraw()
         
         self.ancho = args[0].ancho

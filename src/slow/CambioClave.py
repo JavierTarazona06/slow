@@ -1,7 +1,8 @@
-import VentanaMadre
+from . import VentanaMadre
 from tkinter import*
-import ConexionBaseDeDatosSlow as bD
+from . import ConexionBaseDeDatosSlow as bD
 from tkinter import messagebox
+from .paths import resource_path_string
 
 class CambioClave(VentanaMadre.VentanaMadre):
     def __init__(self,idUsuario):
@@ -54,7 +55,7 @@ class CampoContrasena():
         self.contrasenaNota.place(relx=posx+0.4, rely=posy+0.1)
         self.contrasenaTexto.set("")
 
-        self.ojoClaveAbiertoImg = PhotoImage(file="RecursosGraficos\\\OJOCLAVEABIERTO.png")
+        self.ojoClaveAbiertoImg = PhotoImage(file=resource_path_string("OJOCLAVEABIERTO.png"))
         self.ojoClaveAbiertoImg = self.ojoClaveAbiertoImg.subsample(15)
         self.ojoClaveBoton = Button(self.base, image=self.ojoClaveAbiertoImg, command=self.abrirOjo,bg="white", border=1, relief="raised", cursor="hand2", bd=0)
         self.ojoClaveBoton.place(relx=0.863, rely=posy-0.02)
@@ -68,13 +69,13 @@ class CampoContrasena():
         self.ojoClaveBoton.config(bd=0)
 
     def abrirOjo(self):
-        self.ojoClaveCerradoImg = PhotoImage(file="RecursosGraficos\\\OJOCLAVECERRADO.png")
+        self.ojoClaveCerradoImg = PhotoImage(file=resource_path_string("OJOCLAVECERRADO.png"))
         self.ojoClaveCerradoImg = self.ojoClaveCerradoImg.subsample(15)
         self.ojoClaveBoton.config(image=self.ojoClaveCerradoImg, command=self.cerrarOjo)
         self.contrasenaEntrada.config(show="")
 
     def cerrarOjo(self):
-        self.ojoClaveAbiertoImg = PhotoImage(file="RecursosGraficos\\\OJOCLAVEABIERTO.png")
+        self.ojoClaveAbiertoImg = PhotoImage(file=resource_path_string("OJOCLAVEABIERTO.png"))
         self.ojoClaveAbiertoImg = self.ojoClaveAbiertoImg.subsample(15)
         self.ojoClaveBoton.config(image=self.ojoClaveAbiertoImg, command=self.abrirOjo)
         self.contrasenaEntrada.config(show="*")

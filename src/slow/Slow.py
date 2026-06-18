@@ -4,10 +4,24 @@ from tkinter import ttk
 from PIL import ImageTk, Image
 import cv2, windnd, imutils
 from functools import partial
-import ConexionBaseDeDatosSlow as bD
-import Imagenes, ArchivosYCarpetas, os
+from . import ConexionBaseDeDatosSlow as bD
+from . import Imagenes, ArchivosYCarpetas
+import os
 from tkinter import messagebox
-import MAIN_DETECCION as Deteccion
+from . import MAIN_DETECCION as Deteccion
+from .paths import (
+  GRAPHS_DIR,
+  PROFILE_IMAGES_DIR,
+  ROAD_IMAGES_DIR,
+  VEHICLE_IMAGES_DIR,
+  path_string,
+  profile_image_path,
+  resolve_path,
+  resolve_path_string,
+  resource_path_string,
+  road_image_path,
+  vehicle_image_path,
+)
 
 # interfaz principal
 class App:
@@ -67,7 +81,7 @@ class App:
 
   def cerrarSesionBotonAccion():
     root.destroy()
-    from InicioSesion import VentanaInicioSesion
+    from .InicioSesion import VentanaInicioSesion
     ventanaInicioSesion = VentanaInicioSesion()
     ventanaInicioSesion.ventana.mainloop()
 
@@ -373,7 +387,7 @@ class Date(info):
     self.contrasenaNota.place(relx=self.xCol1b, rely=self.yCol1b+self.altura+0.03)
     self.contrasenaTexto.set("")
 
-    self.ojoClaveAbiertoImg = PhotoImage(file="RecursosGraficos\\\OJOCLAVEABIERTO.png")
+    self.ojoClaveAbiertoImg = PhotoImage(file=resource_path_string("OJOCLAVEABIERTO.png"))
     self.ojoClaveAbiertoImg = self.ojoClaveAbiertoImg.subsample(15)
     self.ojoClaveBoton = Button(self.frame, image=self.ojoClaveAbiertoImg, command=self.abrirOjo,bg="white", border=1, relief="raised", cursor="hand2", bd=0)
     self.ojoClaveBoton.place(relx=self.xCol1b+0.153, rely=self.yCol1b+0.083)
@@ -576,13 +590,13 @@ class Date(info):
     self.ojoClaveBoton.config(bd=0)
 
   def abrirOjo(self):
-    self.ojoClaveCerradoImg = PhotoImage(file="RecursosGraficos\\\OJOCLAVECERRADO.png")
+    self.ojoClaveCerradoImg = PhotoImage(file=resource_path_string("OJOCLAVECERRADO.png"))
     self.ojoClaveCerradoImg = self.ojoClaveCerradoImg.subsample(15)
     self.ojoClaveBoton.config(image=self.ojoClaveCerradoImg, command=self.cerrarOjo)
     self.contrasenaEntrada.config(show="")
 
   def cerrarOjo(self):
-    self.ojoClaveAbiertoImg = PhotoImage(file="RecursosGraficos\\\OJOCLAVEABIERTO.png")
+    self.ojoClaveAbiertoImg = PhotoImage(file=resource_path_string("OJOCLAVEABIERTO.png"))
     self.ojoClaveAbiertoImg = self.ojoClaveAbiertoImg.subsample(15)
     self.ojoClaveBoton.config(image=self.ojoClaveAbiertoImg, command=self.abrirOjo)
     self.contrasenaEntrada.config(show="*")
@@ -979,11 +993,11 @@ class Vias(info):
         self.crearTextoDentroCanvas(self.xDCV_C1,self.intervAltura+50,f"{i[0]}")
         self.crearTextoDentroCanvas(self.xDCV_C2,self.intervAltura+50,f"{i[1]}")
 
-        self.carpetaImgVias = ArchivosYCarpetas.Carpeta("RecursosGraficos\\ImgVias")
+        self.carpetaImgVias = ArchivosYCarpetas.Carpeta(ROAD_IMAGES_DIR)
         if not self.carpetaImgVias.existeCarpeta:
           self.carpetaImgVias.crearCarpeta()
         self.imagenVia = Imagenes.ImagenHexaDecimalStr(i[2])
-        self.imagenViaPath = f"RecursosGraficos\\ImgVias\\imagenVia-{i[1]}.png"
+        self.imagenViaPath = path_string(road_image_path(f"imagenVia-{i[1]}.png"))
         try:
           os.remove(self.imagenViaPath)
         except FileNotFoundError:
@@ -1109,11 +1123,11 @@ class Vehiculos(info):
         self.crearTextoDentroCanvas(self.xDCV_C1,self.intervAltura+50,f"{i[0]}")
         self.crearTextoDentroCanvas(self.xDCV_C2,self.intervAltura+50,f"{i[1]}")
 
-        self.carpetaImgVehiculos = ArchivosYCarpetas.Carpeta("RecursosGraficos\\ImgVehiculos")
+        self.carpetaImgVehiculos = ArchivosYCarpetas.Carpeta(VEHICLE_IMAGES_DIR)
         if not self.carpetaImgVehiculos.existeCarpeta:
           self.carpetaImgVehiculos.crearCarpeta()
         self.imagenVehiculo = Imagenes.ImagenHexaDecimalStr(i[2])
-        self.imagenVehiculoPath = f"RecursosGraficos\\ImgVehiculos\\imagenVehiculo-{i[1]}.png"
+        self.imagenVehiculoPath = path_string(vehicle_image_path(f"imagenVehiculo-{i[1]}.png"))
         try:
           os.remove(self.imagenVehiculoPath)
         except FileNotFoundError:
@@ -1315,7 +1329,7 @@ class ImInter:
     self.relx = relx
     self.rely = rely
     self.bg=bg
-    self.open = Image.open(self.objeto)
+    self.open = Image.open(resolve_path(self.objeto))
     
   #muestra la imagen creada
   def show(self):
@@ -1539,11 +1553,11 @@ class guardarVia(info):
     if not len(datosVia)==0:
         self.NombreVia.set(datosVia[0][1])
 
-        self.carpetaImgVias = ArchivosYCarpetas.Carpeta("RecursosGraficos\\ImgVias")
+        self.carpetaImgVias = ArchivosYCarpetas.Carpeta(ROAD_IMAGES_DIR)
         if not self.carpetaImgVias.existeCarpeta:
           self.carpetaImgVias.crearCarpeta()
         self.imagenVia = Imagenes.ImagenHexaDecimalStr(datosVia[0][2])
-        self.imagenViaPath = f"RecursosGraficos\\ImgVias\\imagenVia-{datosVia[0][1]}.png"
+        self.imagenViaPath = path_string(road_image_path(f"imagenVia-{datosVia[0][1]}.png"))
         try:
           os.remove(self.imagenViaPath)
         except FileNotFoundError:
@@ -1834,11 +1848,11 @@ class GuardarVehiculo(info):
         self.IdVideoCamp = datosVehiculo[0][1]
         self.IdVideo.config(text=self.IdVideoCamp)
 
-        self.carpetaImgVehiculos = ArchivosYCarpetas.Carpeta("RecursosGraficos\\ImgVehiculos")
+        self.carpetaImgVehiculos = ArchivosYCarpetas.Carpeta(VEHICLE_IMAGES_DIR)
         if not self.carpetaImgVehiculos.existeCarpeta:
           self.carpetaImgVehiculos.crearCarpeta()
         self.imagenVehiculo = Imagenes.ImagenHexaDecimalStr(datosVehiculo[0][2])
-        self.imagenVehiculoPath = f"RecursosGraficos\\ImgVehiculos\\imagenVehiculo-{datosVehiculo[0][0]}-{datosVehiculo[0][4]}.png"
+        self.imagenVehiculoPath = path_string(vehicle_image_path(f"imagenVehiculo-{datosVehiculo[0][0]}-{datosVehiculo[0][4]}.png"))
         try:
           os.remove(self.imagenVehiculoPath)
         except FileNotFoundError:
@@ -1950,7 +1964,7 @@ class VidInter(ImInter):
     self.x = x
     self.variable = variable
     self.canvas = canvas
-    self.cap = cv2.VideoCapture(self.objeto)
+    self.cap = cv2.VideoCapture(resolve_path_string(self.objeto))
     self.run = False
   
   def create_label(self):
@@ -2088,7 +2102,7 @@ class history(info):
 
   def verGrafica(self,idVideo):
     conexionSlow = bD.ConexionBaseDeDatosSlow()
-    carpetaGraficas = ArchivosYCarpetas.Carpeta("Graficas")
+    carpetaGraficas = ArchivosYCarpetas.Carpeta(GRAPHS_DIR)
     if not carpetaGraficas.existeCarpeta:
       carpetaGraficas.crearCarpeta()
     conexionSlow.cursorSlow.execute(f"SELECT GRAFICA FROM DETECCIONYVIDEOS WHERE IDVIDEO={idVideo}")
@@ -2188,11 +2202,11 @@ def tomarInfoUsuario():
   celular = int(listaInfoUsuario[0][20])
   correo = f"{listaInfoUsuario[0][21]}"
   fondo = f"{listaInfoUsuario[0][22]}"
-  carpetaImgPerfil = ArchivosYCarpetas.Carpeta("RecursosGraficos\\ImagenesPerfil")
+  carpetaImgPerfil = ArchivosYCarpetas.Carpeta(PROFILE_IMAGES_DIR)
   if not carpetaImgPerfil.existeCarpeta:
     carpetaImgPerfil.crearCarpeta()
   imagenPerfil = Imagenes.ImagenHexaDecimalStr(imagenPerfil)
-  imagenPerfilPath = f"RecursosGraficos\\ImagenesPerfil\\imagenPerfil-{idUsuario}.png"
+  imagenPerfilPath = path_string(profile_image_path(f"imagenPerfil-{idUsuario}.png"))
   try:
     os.remove(imagenPerfilPath)
   except FileNotFoundError:
@@ -2235,7 +2249,7 @@ def elUsuario(usuario):
   alto = root.winfo_screenheight()
   root.geometry(f"{ancho}x{alto}+0+0")
   root.resizable(False,False)
-  root.iconbitmap("RecursosGraficos\\Logo_Slow_Icon_Map.ico")
+  root.iconbitmap(resource_path_string("Logo_Slow_Icon_Map.ico"))
   root.configure(bg='white')
 
   idUsuario = usuario

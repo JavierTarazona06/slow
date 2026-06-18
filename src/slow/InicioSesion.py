@@ -1,7 +1,7 @@
 from tkinter import *
-import ConexionBaseDeDatosSlow as bD
+from . import ConexionBaseDeDatosSlow as bD
 from tkinter import messagebox
-import VentanaMadre
+from . import VentanaMadre
 
 class VentanaInicioSesion(VentanaMadre.VentanaMadre):
     
@@ -129,7 +129,7 @@ class VentanaInicioSesion(VentanaMadre.VentanaMadre):
         if (usuario=="Usuario" and contrasena=="Contraseña") or (usuario=="" and contrasena==""): iniciar= False
         if iniciar:
             self.ventana.destroy()
-            import Slow as slowApp
+            from . import Slow as slowApp
             slowApp.elUsuario(idUsuario)
         else:
             messagebox.showerror('Error en Inicio de Sesión', 'Usuario o Clave Incorrecta\nFavor verifique e inténtelo nuevamente.')
@@ -149,7 +149,7 @@ class VentanaInicioSesion(VentanaMadre.VentanaMadre):
         if (usuario=="Usuario" and contrasena=="Contraseña") or (usuario=="" and contrasena==""): iniciar= False
         if iniciar:
             self.ventana.destroy()
-            import Slow as slowApp
+            from . import Slow as slowApp
             slowApp.elUsuario(idUsuario)
         else:
             messagebox.showerror('Error en Inicio de Sesión', 'Usuario o Clave Incorrecta\nFavor verifique e inténtelo nuevamente.')
@@ -157,6 +157,6 @@ class VentanaInicioSesion(VentanaMadre.VentanaMadre):
 
     def crearCuenta(self):
         self.ventana.destroy()
-        from CrearCuenta import VentanaRegistro
+        from .CrearCuenta import VentanaRegistro
         ventanaRegistro = VentanaRegistro()
         ventanaRegistro.ventana.mainloop()

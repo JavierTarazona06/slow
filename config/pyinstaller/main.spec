@@ -4,10 +4,10 @@
 block_cipher = None
 
 
-a = Analysis(['main.py'],
-             pathex=[],
+a = Analysis(['scripts/run_app.py'],
+             pathex=['src'],
              binaries=[],
-             datas=[],
+             datas=[('assets', 'assets'), ('config', 'config')],
              hiddenimports=[],
              hookspath=[],
              hooksconfig={},
@@ -37,4 +37,4 @@ exe = EXE(pyz,
           disable_windowed_traceback=False,
           target_arch=None,
           codesign_identity=None,
-          entitlements_file=None , icon='RecursosGraficos\\Logo_Slow_Icon_Map.ico')
+          entitlements_file=None , icon='assets/graphics/resources/Logo_Slow_Icon_Map.ico')

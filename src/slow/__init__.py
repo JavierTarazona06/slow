@@ -1,0 +1,2 @@
+"""SLOW desktop application package."""
+

@@ -2,6 +2,16 @@ from tkinter import *
 from PIL import Image,ImageTk
 import tkinter as tk
 import tkinter.filedialog as fd
+from pathlib import Path
+import sys
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+SRC_DIR = PROJECT_ROOT / "src"
+
+if str(SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(SRC_DIR))
+
+from slow.paths import graph_path, resolve_path, resource_path_string
 
 def ej1():
     root = Tk()
@@ -67,7 +77,7 @@ def ej3():
     canvas.pack()
 
     #Load an image in the script
-    img= (Image.open("Boton.png"))
+    img= (Image.open(resolve_path("Boton.png")))
 
     #Resize the Image using resize method
     resized_image= img.resize((150,150), Image.ANTIALIAS)
@@ -108,13 +118,13 @@ def ej4():
 def ej5():
     ventanaGrafica = Tk()
     ventanaGrafica.title("GraficaVideo-ID:5")
-    ventanaGrafica.iconbitmap("RecursosGraficos\\Logo_Slow_Icon_Map.ico")
+    ventanaGrafica.iconbitmap(resource_path_string("Logo_Slow_Icon_Map.ico"))
     ventanaGrafica.config(bg="white")
     ventanaGrafica.resizable(False,False)
 
     base = Frame(ventanaGrafica, bg="white").pack()
 
-    imgGrafica = PhotoImage(file="Graficas\\GraficaVideo-1.png")
+    imgGrafica = PhotoImage(file=str(graph_path("GraficaVideo-1.png")))
     labelImgGrafica = Label(base, image=imgGrafica, bg="white")
     labelImgGrafica.pack()
 

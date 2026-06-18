@@ -1,10 +1,10 @@
 from tkinter import *
 from tkinter.ttk import Combobox
 from tkinter import ttk
-import VentanaMadre
-import ConexionBaseDeDatosSlow as bD
+from . import VentanaMadre
+from . import ConexionBaseDeDatosSlow as bD
 from tkinter import filedialog
-import Imagenes
+from . import Imagenes
 from tkinter import messagebox
 from PIL import Image,ImageTk
 
@@ -229,7 +229,7 @@ class VentanaRegistro(VentanaMadre.VentanaMadre):
 
     def devolver(self):
         self.ventana.destroy()
-        from InicioSesion import VentanaInicioSesion
+        from .InicioSesion import VentanaInicioSesion
         ventanaInicioSesion = VentanaInicioSesion()
         ventanaInicioSesion.ventana.mainloop()
 

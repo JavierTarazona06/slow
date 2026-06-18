@@ -1,35 +1,36 @@
 import _tkinter as Tk
 from tkinter import *
+from .paths import resource_path_string
 
 class VentanaMadre():
     def __init__(self):
 
-        self.recursosGraficos = {"LOGOSLOWICO":"RecursosGraficos\\Logo_Slow_Icon_Map.ico",
-        "LOGOSLOW":'RecursosGraficos\\\Logo_Slow.png',
-        "DEVOLVER":'RecursosGraficos\\\DEVOLVER.png',
-        "MENU":'RecursosGraficos\\\MENU.png',
-        "RECARGAR":'RecursosGraficos\\\RECARGAR.png',
-        "ELIMINAR":'RecursosGraficos\\\ELIMINAR.png',
-        "MULTA":'RecursosGraficos\\\MULTA.png',
-        "AVATAR":'RecursosGraficos\\\AVATAR.png',
-        "CANDADO":'RecursosGraficos\\\CANDADO.png',
-        "OJOCLAVECERRADO":'RecursosGraficos\\\OJOCLAVECERRADO.png',
-        "OJOCLAVEABIERTO":'RecursosGraficos\\\OJOCLAVEABIERTO.png',
-        "TARJETADOCUMENTO":'RecursosGraficos\\\TARJETADOCUMENTO.png',
-        "CORREO":'RecursosGraficos\\\CORREO.png',
-        "ROL":'RecursosGraficos\\\ROL.png',
-        "CLAVE":'RecursosGraficos\\\CLAVE.png',
+        self.recursosGraficos = {"LOGOSLOWICO": resource_path_string("Logo_Slow_Icon_Map.ico"),
+        "LOGOSLOW": resource_path_string("Logo_Slow.png"),
+        "DEVOLVER": resource_path_string("DEVOLVER.png"),
+        "MENU": resource_path_string("MENU.png"),
+        "RECARGAR": resource_path_string("RECARGAR.png"),
+        "ELIMINAR": resource_path_string("ELIMINAR.png"),
+        "MULTA": resource_path_string("MULTA.png"),
+        "AVATAR": resource_path_string("AVATAR.png"),
+        "CANDADO": resource_path_string("CANDADO.png"),
+        "OJOCLAVECERRADO": resource_path_string("OJOCLAVECERRADO.png"),
+        "OJOCLAVEABIERTO": resource_path_string("OJOCLAVEABIERTO.png"),
+        "TARJETADOCUMENTO": resource_path_string("TARJETADOCUMENTO.png"),
+        "CORREO": resource_path_string("CORREO.png"),
+        "ROL": resource_path_string("ROL.png"),
+        "CLAVE": resource_path_string("CLAVE.png"),
         "POLICIA":'POLICIA NACIONAL',
-        "ESCUDOPOLICIA":'RecursosGraficos\\\ESCUDOPOLICIA.png',
+        "ESCUDOPOLICIA": resource_path_string("ESCUDOPOLICIA.png"),
         "PAIS":'REPÚBLICA DE COLOMBIA',
-        "BANDERAPAIS":'RecursosGraficos\\\BANDERAPAIS.png',
-        "INFORMACION":'RecursosGraficos\\\INFORMACION.png',
-        "ACTUALIZARDATOS":'RecursosGraficos\\\ACTUALIZARDATOS.png',
-        "REGISTRARVIDEOS":'RecursosGraficos\\\REGISTRARVIDEOS.png',
-        "VEHICULOSVIAS":'RecursosGraficos\\\VEHICULOSVIAS.png',
-        "HISTORICO":'RecursosGraficos\\\HISTORICO.png',
-        "PERFILDEFECTO":'RecursosGraficos\\\PERFILDEFECTO.png',
-        "VIADEFECTO":'RecursosGraficos\\\VIADEFECTO.png'}
+        "BANDERAPAIS": resource_path_string("BANDERAPAIS.png"),
+        "INFORMACION": resource_path_string("INFORMACION.png"),
+        "ACTUALIZARDATOS": resource_path_string("ACTUALIZARDATOS.png"),
+        "REGISTRARVIDEOS": resource_path_string("REGISTRARVIDEOS.png"),
+        "VEHICULOSVIAS": resource_path_string("VEHICULOSVIAS.png"),
+        "HISTORICO": resource_path_string("HISTORICO.png"),
+        "PERFILDEFECTO": resource_path_string("PERFILDEFECTO.png"),
+        "VIADEFECTO": resource_path_string("VIADEFECTO.png")}
 
         #Root------------
 

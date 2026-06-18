@@ -1,0 +1,8 @@
+imutils
+matplotlib
+numpy
+opencv-python
+Pillow
+PyMySQL
+pyscreenshot
+windnd; platform_system == "Windows"

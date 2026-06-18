@@ -1,12 +1,13 @@
 import cv2
 import numpy as np
-from ArchivosYCarpetas import Carpeta
-from Imagenes import Imagen
-from Localizador_ob import *
+from .ArchivosYCarpetas import Carpeta
+from .Imagenes import Imagen
+from .Localizador_ob import *
 import time
 import pyscreenshot
-import Graph as gp
-import ConexionBaseDeDatosSlow as bD
+from . import Graph as gp
+from . import ConexionBaseDeDatosSlow as bD
+from .paths import CAPTURES_DIR, VIDEOS_DIR, capture_path, path_string, project_relative_string, resolve_path_string, video_path
 
 class Grafico_muestra:
 
@@ -23,16 +24,16 @@ class Grafico_muestra:
         VALUES ({self.idUsuario},'CAMBIO',{self.idVias},'{self.ciudad}','{self.direccion}',CURDATE())''')
         conexionSlow.cursorSlow.execute("SELECT IDVIDEO FROM DETECCIONYVIDEOS WHERE VIDEO='CAMBIO'")
         self.idVideo = conexionSlow.cursorSlow.fetchone()[0]
-        carpetaVideos = Carpeta("Videos")
+        carpetaVideos = Carpeta(VIDEOS_DIR)
         if not carpetaVideos.existeCarpeta:
-            carpetaVideos.crearCarpeta
+            carpetaVideos.crearCarpeta()
         self.videoN = f"video-{self.idVideo}.mp4"
         carpetaVideos.copiarArchivo(self.video,self.videoN)
-        conexionSlow.cursorSlow.execute(f"UPDATE DETECCIONYVIDEOS SET VIDEO='Videos\\\{self.videoN}' WHERE IDVIDEO={self.idVideo}")
+        conexionSlow.cursorSlow.execute(f"UPDATE DETECCIONYVIDEOS SET VIDEO='{project_relative_string(video_path(self.videoN))}' WHERE IDVIDEO={self.idVideo}")
         conexionSlow.cursorSlow.execute(f"SELECT LIMITEVELOCIDAD FROM VIAS WHERE IDVIA={self.idVias}")
         self.limiteVelocidad = float(conexionSlow.cursorSlow.fetchone()[0])
 
-        carpetaCapturas = Carpeta("Capturas")
+        carpetaCapturas = Carpeta(CAPTURES_DIR)
         if not carpetaCapturas.existeCarpeta:
             carpetaCapturas.crearCarpeta()
 
@@ -43,7 +44,7 @@ class Grafico_muestra:
         self.grafic = gp.Graph(self.idVideo)
         video = self.video  # aqui se guarda el path del video
         print(video)
-        lecturaVideo = cv2.VideoCapture(video)
+        lecturaVideo = cv2.VideoCapture(resolve_path_string(video))
 
         # fps = 30
         # fps = lecturaVideo.get(cv2.CAP_PROP_FPS)
@@ -168,8 +169,9 @@ class Grafico_muestra:
                         if id in velocidades:
                             if velocidades[id][3] == 0:
                                 imagen = pyscreenshot.grab()
-                                imagen.save(f"Capturas\\Infractor_{str(id)}.png")
-                                velocidades[id][3] = f"Capturas\\Infractor_{str(id)}.png"
+                                captura_path = path_string(capture_path(f"Infractor_{str(id)}.png"))
+                                imagen.save(captura_path)
+                                velocidades[id][3] = captura_path
                                 #Se pasan los datos a la grafica y a la base de datos
                                 self.grafic.guardarCarros(grafica)
                                 #Poner Correctamente
@@ -218,5 +220,5 @@ class Grafico_muestra:
         self.grafic.graficarYMostrar()
         self.grafic = gp.Graph(self.grafic,self.idVideo)
         conexionSlow = bD.ConexionBaseDeDatosSlow()
-        conexionSlow.cursorSlow.execute(f"UPDATE DETECCIONYVIDEOS SET GRAFICA='{self.grafic.pathToSaveGraphs}' WHERE IDVIDEO={self.idVideo}")
+        conexionSlow.cursorSlow.execute(f"UPDATE DETECCIONYVIDEOS SET GRAFICA='{project_relative_string(self.grafic.pathToSaveGraphs)}' WHERE IDVIDEO={self.idVideo}")
         conexionSlow.cerrarBaseDeDatosSlow()

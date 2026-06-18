@@ -1,8 +1,9 @@
 import binascii
+from .paths import debug_output_path, resolve_path, resource_path
 
 class Imagen():
     def __init__(self,imagePath):
-        self.direccionImagen = imagePath
+        self.direccionImagen = resolve_path(imagePath)
 
     def aBinaria(self):
         with open (self.direccionImagen,"rb") as file:
@@ -36,10 +37,11 @@ class ImagenHexaDecimalStr():
 
 def escribirTexto(imagenViaBin):
     from io import open
-    archivo = open("archivotexto.txt","w")
+    archivo = open(debug_output_path("archivotexto.txt"),"w")
     archivo.write(imagenViaBin)
     archivo.close()
 
-imagenVia = Imagen("RecursosGraficos\\Avenida.png")
-imagenViaBin = imagenVia.aHexaDecimalStr()
-escribirTexto(imagenViaBin)
+if __name__ == "__main__":
+    imagenVia = Imagen(resource_path("Avenida.png"))
+    imagenViaBin = imagenVia.aHexaDecimalStr()
+    escribirTexto(imagenViaBin)
