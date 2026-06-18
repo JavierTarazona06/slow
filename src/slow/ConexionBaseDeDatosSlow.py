@@ -49,22 +49,15 @@ def load_database_settings(config_path: Path = CONFIG_DIR / "database.txt") -> D
         db=values["db"] or "slow",
     )
 
-class ConexionBaseDeDatosSlow():
-    '''
-    4 Bases de datos para el funcionamiento de Slow más un diccionario self.recursosGraficos con claves como los nombres de las imágenes
-    y los valores como las rutas de las mismas para usar en la interfaz gráfica de slow.
-    Nota: Inicializar (conectar) sólo una vez ya que esta es la base de datos inicial de Slow.
-    Es decir, no crear mas instancias ya que se dirige al mismo host con la base de datos slow, por lo tanto no es necesario.
-    '''
-    '''
-    Encriptar: En Insert: values (usuario,aes_encrypt('clave','claveDeLaClave'))
-    Desencriptar: En Select: SELECT aes_decrypt(clave,'claveDeLaCLave')
-    '''
-    def __init__(self):
-        self.abrirBasedeDatosSlow()
+class DatabaseConnection:
+    """MySQL connection helper for the SLOW application schema."""
+
+    def __init__(self) -> None:
+        self.open()
         print("BD: Slow conectada")
 
-    def abrirBasedeDatosSlow(self):
+    def open(self) -> None:
+        """Open a connection to the configured SLOW database."""
         settings = load_database_settings()
         self.conexionSlow = pymysql.connect(
             host=settings.host,
@@ -76,16 +69,22 @@ class ConexionBaseDeDatosSlow():
         self.cursorSlow = self.conexionSlow.cursor()
         print("BBDD: Slow Abierta Exitosamente")
 
-    def __str__(self):
+    abrirBasedeDatosSlow = open
+
+    def __str__(self) -> str:
         self.infoServidor = self.conexionSlow.get_server_info()
         self.cursorSlow.execute("SELECT DATABASE()")
         self.bd = self.cursorSlow.fetchone()
         return f"Información del servidor: {self.infoServidor}. Base de Datos: {self.bd}"
 
-    def eliminarTabla(self,tabla):
-            self.cursorSlow.execute(f"DROP TABLE {tabla}")
+    def drop_table(self, table: str) -> None:
+        """Drop a database table by name."""
+        self.cursorSlow.execute(f"DROP TABLE {table}")
 
-    def crearTablaUsuarios(self):
+    eliminarTabla = drop_table
+
+    def create_users_table(self) -> None:
+        """Create the users table if it does not exist."""
         self.cursorSlow.execute('''
             CREATE TABLE IF NOT EXISTS USUARIOS (
             IDUSUARIO INT AUTO_INCREMENT,
@@ -114,9 +113,12 @@ class ConexionBaseDeDatosSlow():
             PRIMARY KEY (IDUSUARIO)
             )
         ''')
-        self.reiniciarBaseDeDatosSlow()
+        self.reconnect()
 
-    def crearTablaDeteccionYVideos(self):
+    crearTablaUsuarios = create_users_table
+
+    def create_detection_videos_table(self) -> None:
+        """Create the detection/videos table if it does not exist."""
         self.cursorSlow.execute('''
             CREATE TABLE IF NOT EXISTS DETECCIONYVIDEOS (
                 IDVIDEO INT AUTO_INCREMENT,
@@ -132,9 +134,12 @@ class ConexionBaseDeDatosSlow():
                 CONSTRAINT FK_IDVIA FOREIGN KEY (IDVIA) REFERENCES VIAS (IDVIA)
             )
         ''')
-        self.reiniciarBaseDeDatosSlow()
+        self.reconnect()
 
-    def crearTablaVias(self):
+    crearTablaDeteccionYVideos = create_detection_videos_table
+
+    def create_roads_table(self) -> None:
+        """Create the roads table if it does not exist."""
         self.cursorSlow.execute('''
         CREATE TABLE IF NOT EXISTS VIAS(
             IDVIA INT AUTO_INCREMENT,
@@ -144,9 +149,12 @@ class ConexionBaseDeDatosSlow():
             MULTA FLOAT,
             PRIMARY KEY (IDVIA))
         ''')
-        self.reiniciarBaseDeDatosSlow()
+        self.reconnect()
 
-    def crearTablaVehiculos (self):
+    crearTablaVias = create_roads_table
+
+    def create_vehicles_table(self) -> None:
+        """Create the vehicles table if it does not exist."""
         self.cursorSlow.execute('''
             CREATE TABLE IF NOT EXISTS VEHICULOS (
                 IDVEHICULO INT AUTO_INCREMENT,
@@ -165,27 +173,44 @@ class ConexionBaseDeDatosSlow():
                 CONSTRAINT FK_IDVIDEO FOREIGN KEY (IDVIDEO) REFERENCES DETECCIONYVIDEOS (IDVIDEO)
             )
         ''')
-        self.reiniciarBaseDeDatosSlow()
+        self.reconnect()
 
-    def cerrarBaseDeDatosSlow(self):
+    crearTablaVehiculos = create_vehicles_table
+
+    def close(self) -> None:
+        """Commit pending work and close the database connection."""
         self.conexionSlow.commit()
         self.cursorSlow.close()
         self.conexionSlow.close()
         print("BBDD: Slow Cerrada Exitosamente")
 
-    def reiniciarBaseDeDatosSlow(self):
-        self.cerrarBaseDeDatosSlow()
-        self.abrirBasedeDatosSlow()
+    cerrarBaseDeDatosSlow = close
 
-def main():
+    def reconnect(self) -> None:
+        """Close and reopen the database connection."""
+        self.close()
+        self.open()
+
+    reiniciarBaseDeDatosSlow = reconnect
+
+
+ConexionBaseDeDatosSlow = DatabaseConnection
+
+
+def initialize_schema() -> None:
     """Create the SLOW database tables."""
-    conexionSlow = ConexionBaseDeDatosSlow()
-    print(conexionSlow)
-    conexionSlow.crearTablaUsuarios()
-    conexionSlow.crearTablaVias()
-    conexionSlow.crearTablaDeteccionYVideos()
-    conexionSlow.crearTablaVehiculos()
-    conexionSlow.cerrarBaseDeDatosSlow()
+    database = DatabaseConnection()
+    print(database)
+    database.create_users_table()
+    database.create_roads_table()
+    database.create_detection_videos_table()
+    database.create_vehicles_table()
+    database.close()
+
+
+def main() -> None:
+    """CLI entry point for schema initialization."""
+    initialize_schema()
 
 if __name__ == "__main__":
     main()

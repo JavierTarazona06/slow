@@ -24,7 +24,7 @@ def main() -> int:
     add_src_to_python_path()
 
     try:
-        from slow.ConexionBaseDeDatosSlow import main as initialize_schema
+        from slow.ConexionBaseDeDatosSlow import initialize_schema
 
         initialize_schema()
     except ModuleNotFoundError as exc:

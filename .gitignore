@@ -23,6 +23,10 @@ build/
 dist/
 *.egg-info/
 *.manifest
+*.exe
+*.app/
+*.dmg
+*.AppImage
 *.spec
 !config/pyinstaller/*.spec
 
@@ -48,4 +52,3 @@ archive/os-metadata/
 *.bak
 *.swp
 *.swo
-
