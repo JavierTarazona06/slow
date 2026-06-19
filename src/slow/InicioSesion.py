@@ -24,7 +24,7 @@ class VentanaInicioSesion(VentanaMadre.VentanaMadre):
         self.avatarImg = self.avatarImg.subsample(15)
         self.avatar = Label(self.base, image=self.avatarImg, bg="white").place(relx=0.406, rely=0.42)
 
-        self.usuarioEntrada = Entry(self.base,bg="white",fg="grey", justify="left", font=(30), width=25, border=3)
+        self.usuarioEntrada = Entry(self.base,bg="white",fg="grey", justify="left", font=("Helvetica",30), width=25, border=3)
         self.usuarioEntrada.place(relx=0.4375, rely=0.43)
         self.usuarioEntrada.insert(0,'Usuario')
         self.usuarioEntrada.bind("<FocusIn>",self.defaultUsuario)
@@ -35,7 +35,7 @@ class VentanaInicioSesion(VentanaMadre.VentanaMadre):
         self.candadoImg = self.candadoImg.subsample(15)
         self.candado = Label(self.base, image=self.candadoImg, bg="white").place(relx=0.406, rely=0.485)
 
-        self.contrasenaEntrada = Entry(self.base,bg="white",fg="grey", justify="left", font=(30), width=25, border=3)
+        self.contrasenaEntrada = Entry(self.base,bg="white",fg="grey", justify="left", font=("Helvetica",30), width=25, border=3)
         self.contrasenaEntrada.place(relx=0.4375, rely=0.495)
         self.contrasenaEntrada.insert(0,'Contraseña')
         self.contrasenaEntrada.bind("<FocusIn>",self.defaultContrasena)
@@ -49,19 +49,24 @@ class VentanaInicioSesion(VentanaMadre.VentanaMadre):
         self.ojoClaveBoton.bind("<Enter>",self.enOjoClaveBoton)
         self.ojoClaveBoton.bind("<Leave>",self.fueraOjoClaveBoton)
 
-        self.iniciarSesionBoton = Button(self.base,text="Iniciar Sesión",bg="black",fg="white", cursor="hand2", font=(40), command=self.iniciarSesion, bd=4)
+        self.iniciarSesionBoton = Button(self.base,text="Iniciar Sesión",bg="black",fg="white", cursor="hand2", font=("Helvetica",20,"bold"), command=self.iniciarSesion, bd=4)
         self.iniciarSesionBoton.place(relx=0.46875, rely=0.585)
         self.iniciarSesionBoton.bind("<Enter>",self.enBotonIniciarSesion)
         self.iniciarSesionBoton.bind("<Leave>",self.fueraBotonIniciarSesion)
 
-        self.crearCuentaBoton = Button(self.base,text="Crear Cuenta",bg="black",fg="white", cursor="hand2" ,font=(40), bd=4, command=self.crearCuenta)
+        self.crearCuentaBoton = Button(self.base,text="Crear Cuenta",bg="black",fg="white", cursor="hand2" ,font=("Helvetica",20,"bold"), bd=4, command=self.crearCuenta)
         self.crearCuentaBoton.place(relx=0.468, rely=0.654)
         self.crearCuentaBoton.bind("<Enter>",self.enBotoCrearCuenta)
         self.crearCuentaBoton.bind("<Leave>",self.fueraBotoCrearCuenta)
 
-        self.firmaUniversidad = Label(self.base, text="Universidad Nacional De Colombia", bg="white", font=(25)).place(relx=0.428125, rely=0.775)
-        self.firmaPOO = Label(self.base, text="Proyecto Programación Orientada a Objetos", bg="white", font=(25)).place(relx=0.40625, rely=0.805)
-        self.firmaAno = Label(self.base, text="2021", bg="white", font=(25)).place(relx=0.49,rely=0.835)
+        self.verAppSinLoginBoton = Button(self.base,text="View App WithOut LogIn",bg="black",fg="white", cursor="hand2" ,font=("Helvetica",16,"bold"), bd=4, command=self.verAppSinLogin)
+        self.verAppSinLoginBoton.place(relx=0.433, rely=0.715)
+        self.verAppSinLoginBoton.bind("<Enter>",self.enBotonVerAppSinLogin)
+        self.verAppSinLoginBoton.bind("<Leave>",self.fueraBotonVerAppSinLogin)
+
+        self.firmaUniversidad = Label(self.base, text="Universidad Nacional De Colombia", bg="white", font=("Helvetica",25)).place(relx=0.428125, rely=0.775)
+        self.firmaAno = Label(self.base, text="2021", bg="white", font=("Helvetica",25)).place(relx=0.49, rely=0.805)
+        self.firmaRefactor = Label(self.base, text="Refactor 2026", bg="white", font=("Helvetica",25)).place(relx=0.4625, rely=0.835)
 
     def defaultUsuario(self,event):
         texto = self.usuarioEntrada.get()
@@ -115,6 +120,12 @@ class VentanaInicioSesion(VentanaMadre.VentanaMadre):
     def fueraBotoCrearCuenta(self, event):
         self.crearCuentaBoton.config(bd=4)
 
+    def enBotonVerAppSinLogin(self, event):
+        self.verAppSinLoginBoton.config(bd=6)
+
+    def fueraBotonVerAppSinLogin(self, event):
+        self.verAppSinLoginBoton.config(bd=4)
+
     def iniciarSesionE(self,event):
         conexionSlow = bD.ConexionBaseDeDatosSlow()
         usuario = self.usuarioEntrada.get()
@@ -160,3 +171,8 @@ class VentanaInicioSesion(VentanaMadre.VentanaMadre):
         from .CrearCuenta import VentanaRegistro
         ventanaRegistro = VentanaRegistro()
         ventanaRegistro.ventana.mainloop()
+
+    def verAppSinLogin(self):
+        self.ventana.destroy()
+        from . import Slow as slowApp
+        slowApp.verAppSinLogin()

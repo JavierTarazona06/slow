@@ -14,6 +14,11 @@ if str(SRC_DIR) not in sys.path:
 from slow.paths import graph_path, resolve_path
 from slow.window_icon import set_window_icon
 
+try:
+    RESAMPLE_LANCZOS = Image.Resampling.LANCZOS
+except AttributeError:
+    RESAMPLE_LANCZOS = Image.LANCZOS if hasattr(Image, "LANCZOS") else Image.BICUBIC
+
 def ej1():
     root = Tk()
     root.geometry("600x600+700+300")
@@ -81,7 +86,7 @@ def ej3():
     img= (Image.open(resolve_path("Boton.png")))
 
     #Resize the Image using resize method
-    resized_image= img.resize((150,150), Image.ANTIALIAS)
+    resized_image= img.resize((150,150), RESAMPLE_LANCZOS)
     new_image= ImageTk.PhotoImage(resized_image)
 
     #Add image to the Canvas Items
@@ -107,7 +112,7 @@ def ej4():
     width = int(o_size[0] * factor)
     height = int(o_size[1] * factor)
 
-    rImg= img.resize((width, height), Image.ANTIALIAS)
+    rImg= img.resize((width, height), RESAMPLE_LANCZOS)
     rImg = ImageTk.PhotoImage(rImg)
     print(rImg)
     canvas = tk.Canvas(root, width=f_size[0], height= f_size[1])

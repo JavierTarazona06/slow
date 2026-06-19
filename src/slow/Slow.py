@@ -28,6 +28,11 @@ from .paths import (
 )
 from .window_icon import set_window_icon
 
+try:
+  RESAMPLE_LANCZOS = Image.Resampling.LANCZOS
+except AttributeError:
+  RESAMPLE_LANCZOS = Image.LANCZOS if hasattr(Image, "LANCZOS") else Image.BICUBIC
+
 # interfaz principal
 class App:
   def __init__(self, root=None):
@@ -808,20 +813,20 @@ class video(info):
     self.TitleViaParaDeteccion = textInter(self.frame,"Ingrese la vía del vídeo para\ndetectar la velocidad de los vehículos:",16,0.18,0.28,'w')
     self.TitleViaParaDeteccion.create_Tittle()
     self.ViaParaDeteccion = StringVar()
-    self.entradaViaParaDeteccion = Entry(self.frame,textvariable=self.ViaParaDeteccion,width=15, font = ('comics Sans MS',18))
+    self.entradaViaParaDeteccion = Entry(self.frame,textvariable=self.ViaParaDeteccion,width=15, font = ('Helvetica',18))
     self.entradaViaParaDeteccion.place(relx = 0.44,rely=0.28,anchor ='w')
     self.entradaViaParaDeteccion.bind("<Return>",self.viaSeleccionadaE)
 
     self.TitleCiudad = textInter(self.frame,"Ciudad:",16,0.28,0.34,'w')
     self.TitleCiudad.create_Tittle()
     self.Ciudad = StringVar()
-    self.entradaCiudad = Entry(self.frame,textvariable=self.Ciudad,width=15, font = ('comics Sans MS',18))
+    self.entradaCiudad = Entry(self.frame,textvariable=self.Ciudad,width=15, font = ('Helvetica',18))
     self.entradaCiudad.place(relx = 0.34,rely=0.34,anchor ='w')
 
     self.TitleDireccion = textInter(self.frame,"Dirección:",16,0.5,0.34,'w')
     self.TitleDireccion.create_Tittle()
     self.Direccion = StringVar()
-    self.entradaDireccion = Entry(self.frame,textvariable=self.Direccion,width=15, font = ('comics Sans MS',18))
+    self.entradaDireccion = Entry(self.frame,textvariable=self.Direccion,width=15, font = ('Helvetica',18))
     self.entradaDireccion.place(relx = 0.58,rely=0.34,anchor ='w')
 
     self.ButtonPuedeSubirVideo = BottInter(self.frame,"SeleccionarVia.png",0.65,0.28,None, self.viaSeleccionada)
@@ -1011,7 +1016,7 @@ class Vias(info):
 
         self.imgViaEnCanvas = Image.open(f"{self.imagenViaPath}")
         self.dimImgVia = 150
-        self.imgViaEnCanvas = self.imgViaEnCanvas.resize((self.dimImgVia,self.dimImgVia), Image.ANTIALIAS)
+        self.imgViaEnCanvas = self.imgViaEnCanvas.resize((self.dimImgVia,self.dimImgVia), RESAMPLE_LANCZOS)
         globals()["imgViaEnCanvas" + str(i)] = ImageTk.PhotoImage(self.imgViaEnCanvas)
 
         self.canvas.create_image(self.xDCV_C3,self.intervAltura+60,image=globals()["imgViaEnCanvas" + str(i)])
@@ -1141,7 +1146,7 @@ class Vehiculos(info):
 
         self.imgVehiculoEnCanvas = Image.open(f"{self.imagenVehiculoPath}")
         self.dimImgVehiculo = 150
-        self.imgVehiculoEnCanvas = self.imgVehiculoEnCanvas.resize((self.dimImgVehiculo,self.dimImgVehiculo), Image.ANTIALIAS)
+        self.imgVehiculoEnCanvas = self.imgVehiculoEnCanvas.resize((self.dimImgVehiculo,self.dimImgVehiculo), RESAMPLE_LANCZOS)
         globals()["imgVehiculoEnCanvas" + str(i)] = ImageTk.PhotoImage(self.imgVehiculoEnCanvas)
 
         self.canvas.create_image(self.xDCV_C3,self.intervAltura+60,image=globals()["imgVehiculoEnCanvas" + str(i)])
@@ -1352,7 +1357,7 @@ class ImInter:
   def sizeImage(self,x,y):
     self.x=x
     self.y=y
-    self.open = self.open.resize((self.y,self.x),Image.ANTIALIAS)
+    self.open = self.open.resize((self.y,self.x),RESAMPLE_LANCZOS)
 
   def create(self):
     
@@ -1383,7 +1388,7 @@ class BottInter(ImInter):
   # crea el boton
   def create(self):
     
-    self.photo =  ImageTk.PhotoImage(self.open.resize((self.sizex,self.sizey), Image.ANTIALIAS))
+    self.photo =  ImageTk.PhotoImage(self.open.resize((self.sizex,self.sizey), RESAMPLE_LANCZOS))
 
     self.panel = Button(self.frame, image = self.photo, bg='white' ,highlightthickness = 0, bd = 0,height = self.sizey, width = self.sizex, command = self.action)
     if (self.objeto =="Menu icon.png"):
@@ -1432,7 +1437,7 @@ class guardarVia(info):
     self.Title_nombreVia = textInter(self.frame,self.Text,16,0.15,0.41,'w')
     self.Title_nombreVia.create_Tittle()
     self.NombreVia= StringVar(self.frame)
-    self.entradaNombreVia = Entry(self.frame,textvariable=self.NombreVia,width=10,font = ('comics Sans MS',18))
+    self.entradaNombreVia = Entry(self.frame,textvariable=self.NombreVia,width=10,font = ('Helvetica',18))
     self.entradaNombreVia.place(relx = 0.34,rely=0.41,anchor ='w')
 
     self.ButtonBuscar= BottInter(self.frame,"BotonBuscar.png",0.23,0.48,None, self.buscarVia)
@@ -1462,14 +1467,14 @@ class guardarVia(info):
     self.Title_LimVel = textInter(self.frame,self.Text,16,0.15,0.57,'w')
     self.Title_LimVel.create_Tittle()
     self.limiteVelocidad= StringVar()
-    self.entradaLimiteVelocidad = Entry(self.frame,textvariable=self.limiteVelocidad,width=10, font = ('comics Sans MS',18))
+    self.entradaLimiteVelocidad = Entry(self.frame,textvariable=self.limiteVelocidad,width=10, font = ('Helvetica',18))
     self.entradaLimiteVelocidad.place(relx = 0.34,rely=0.57,anchor ='w')
 
     self.Text="Multa:"
     self.Title_multa = textInter(self.frame,self.Text,16,0.15,0.64,'w')
     self.Title_multa.create_Tittle()
     self.multa= DoubleVar(self.frame,value=500000)
-    self.entrada_multa = Entry(self.frame,textvariable=self.multa,width=10, font = ('comics Sans MS',18))
+    self.entrada_multa = Entry(self.frame,textvariable=self.multa,width=10, font = ('Helvetica',18))
     self.entrada_multa.place(relx = 0.34,rely=0.64,anchor ='w')
 
     self.Button_guardar = BottInter(self.frame,"Boton_guardar.png",0.5,0.8,None, self.make_guardar_via)
@@ -1639,14 +1644,14 @@ class GuardarVehiculo(info):
     self.Title_idVehiculo = textInter(self.frame,self.Text,16,0.08,0.41,'w')
     self.Title_idVehiculo.create_Tittle()
     self.idVehiculo= StringVar(self.frame)
-    self.entradaidVehiculo = Entry(self.frame,textvariable=self.idVehiculo,width=10,font = ('comics Sans MS',18))
+    self.entradaidVehiculo = Entry(self.frame,textvariable=self.idVehiculo,width=10,font = ('Helvetica',18))
     self.entradaidVehiculo.place(relx = 0.18,rely=0.41,anchor ='w')
 
     self.Text="Placa:"
     self.Title_placa= textInter(self.frame,self.Text,16,0.31,0.41,'w')
     self.Title_placa.create_Tittle()
     self.placa= StringVar(self.frame)
-    self.entradaplaca = Entry(self.frame,textvariable=self.placa,width=10,font = ('comics Sans MS',18))
+    self.entradaplaca = Entry(self.frame,textvariable=self.placa,width=10,font = ('Helvetica',18))
     self.entradaplaca.place(relx = 0.38,rely=0.41,anchor ='w')
 
     self.ButtonBuscar= BottInter(self.frame,"BotonBuscar.png",0.23,0.48,None, self.buscarVehiculo)
@@ -1668,7 +1673,7 @@ class GuardarVehiculo(info):
     self.Text="ID Video:"
     self.Title_IdVideo = textInter(self.frame,self.Text,16,self.col1x,self.coly,'w')
     self.Title_IdVideo.create_Tittle()
-    self.IdVideo= Label(self.frame,width=10, font = ('comics Sans MS',18),bg="white")
+    self.IdVideo= Label(self.frame,width=10, font = ('Helvetica',18),bg="white")
     self.IdVideo.place(relx = self.col1bx ,rely=self.coly,anchor ='w')
     self.IdVideoCamp = "-"
     self.IdVideo.config(text=self.IdVideoCamp)
@@ -1677,20 +1682,20 @@ class GuardarVehiculo(info):
     self.Title_TipoVehiculo = textInter(self.frame,self.Text,16,self.col1x,self.coly+self.interAlt,'w')
     self.Title_TipoVehiculo.create_Tittle()
     self.TipoVehiculo= StringVar()
-    self.entrada_TipoVehiculo = Entry(self.frame,textvariable=self.TipoVehiculo,width=10, font = ('comics Sans MS',18))
+    self.entrada_TipoVehiculo = Entry(self.frame,textvariable=self.TipoVehiculo,width=10, font = ('Helvetica',18))
     self.entrada_TipoVehiculo.place(relx = self.col1bx ,rely=self.coly+self.interAlt,anchor ='w')
 
     self.Text="Velocidad:"
     self.Title_Velocidad = textInter(self.frame,self.Text,16,self.col1x,self.coly+self.interAlt*2,'w')
     self.Title_Velocidad.create_Tittle()
     self.Velocidad= StringVar()
-    self.entrada_Velocidad = Entry(self.frame,textvariable=self.Velocidad,width=10, font = ('comics Sans MS',18))
+    self.entrada_Velocidad = Entry(self.frame,textvariable=self.Velocidad,width=10, font = ('Helvetica',18))
     self.entrada_Velocidad.place(relx = self.col1bx ,rely=self.coly+self.interAlt*2,anchor ='w')
 
     self.Text="Velocidad Excedida:"
     self.Title_VelocidadExcedida = textInter(self.frame,self.Text,16,self.col1x,self.coly+self.interAlt*3,'w')
     self.Title_VelocidadExcedida.create_Tittle()
-    self.VelocidadExcedida = Label(self.frame,width=11, font = ('comics Sans MS',18),bg="white")
+    self.VelocidadExcedida = Label(self.frame,width=11, font = ('Helvetica',18),bg="white")
     self.VelocidadExcedida.place(relx = self.col1bx ,rely=self.coly+self.interAlt*3,anchor ='w')
     self.VelocidadExcedidaCamp = "-"
     self.VelocidadExcedida.config(text=self.VelocidadExcedidaCamp)
@@ -1712,7 +1717,7 @@ class GuardarVehiculo(info):
     self.Text="Via:"
     self.Title_IdVia = textInter(self.frame,self.Text,16,self.col2x,self.col2y+self.interAlt*4,'w')
     self.Title_IdVia.create_Tittle()
-    self.IdVia= Label(self.frame,width=10, font = ('comics Sans MS',18),bg="white")
+    self.IdVia= Label(self.frame,width=10, font = ('Helvetica',18),bg="white")
     self.IdVia.place(relx = self.col2bx ,rely=self.col2y+self.interAlt*4,anchor ='w')
     self.IdViaCamp = "-"
     self.IdVia.config(text=self.IdViaCamp)
@@ -1721,13 +1726,13 @@ class GuardarVehiculo(info):
     self.Title_Multa = textInter(self.frame,self.Text,16,self.col2x,self.col2y+self.interAlt*5,'w')
     self.Title_Multa.create_Tittle()
     self.Multa= StringVar()
-    self.entrada_Multa = Entry(self.frame,textvariable=self.Multa,width=10, font = ('comics Sans MS',18))
+    self.entrada_Multa = Entry(self.frame,textvariable=self.Multa,width=10, font = ('Helvetica',18))
     self.entrada_Multa.place(relx = self.col2bx ,rely=self.col2y+self.interAlt*5,anchor ='w')
 
     self.Text="Usuario:"
     self.Title_IdUsuario = textInter(self.frame,self.Text,16,self.col2x,self.col2y+self.interAlt*6,'w')
     self.Title_IdUsuario.create_Tittle()
-    self.IdUsuario = Label(self.frame,width=10, font = ('comics Sans MS',18),bg="white")
+    self.IdUsuario = Label(self.frame,width=10, font = ('Helvetica',18),bg="white")
     self.IdUsuario.place(relx = self.col2bx ,rely=self.col2y+self.interAlt*6,anchor ='w')
     self.IdUsuarioCamp = "-"
     self.IdUsuario.config(text=self.IdUsuarioCamp)
@@ -2238,6 +2243,48 @@ def minListaPaquete(lista):
       minLista = listaActual
   return minLista
 
+def crearUsuarioInvitadoSiNoExiste():
+  conexionSlow = bD.ConexionBaseDeDatosSlow()
+  try:
+    conexionSlow.cursorSlow.execute("SELECT IDUSUARIO FROM USUARIOS WHERE USUARIO='guest_slow'")
+    usuarioInvitado = conexionSlow.cursorSlow.fetchone()
+    if usuarioInvitado is not None:
+      return usuarioInvitado[0]
+
+    numeroDocumento = 2026000001
+    conexionSlow.cursorSlow.execute("SELECT IDUSUARIO FROM USUARIOS WHERE NUMERODOCUMENTO=%s", (numeroDocumento,))
+    while conexionSlow.cursorSlow.fetchone() is not None:
+      numeroDocumento += 1
+      conexionSlow.cursorSlow.execute("SELECT IDUSUARIO FROM USUARIOS WHERE NUMERODOCUMENTO=%s", (numeroDocumento,))
+
+    imagenPerfil = Imagenes.Imagen(resource_path_string("PERFILDEFECTO.png")).aHexaDecimalStr()
+    conexionSlow.cursorSlow.execute(
+      """
+      INSERT INTO USUARIOS (
+        USUARIO,CLAVE,NOMBRE,APELLIDO,TIPODOCUMENTO,NUMERODOCUMENTO,
+        IMAGENPERFIL,TIPOSANGRE,JEFE,POLICIASASIGNADOS,ASIGNACION,ROL,
+        NUMEROCUADRANTE,CUADRANTE,CIUDAD,DEPARTAMENTO,HORARIO,ESTADO,
+        DIRECCION,CELULAR,CORREO,FONDO
+      ) VALUES (
+        %s,AES_ENCRYPT(%s,'clave'),%s,%s,%s,%s,
+        %s,%s,%s,%s,%s,%s,
+        %s,%s,%s,%s,%s,%s,
+        %s,%s,%s,%s
+      )
+      """,
+      (
+        "guest_slow","guest_slow","Invitado","Deteccion","C.C",numeroDocumento,
+        imagenPerfil,"O+",1,"","DEMO","POLICIA",
+        0,"Demo","Demo","Demo","Demo","ACTIVO",
+        "Demo",1000000000,"guest_slow@policia.gov.co","CLARO",
+      ),
+    )
+    conexionSlow.cursorSlow.execute("SELECT IDUSUARIO FROM USUARIOS WHERE USUARIO='guest_slow'")
+    usuarioInvitado = conexionSlow.cursorSlow.fetchone()
+    return usuarioInvitado[0]
+  finally:
+    conexionSlow.cerrarBaseDeDatosSlow()
+
 #Crea Ventana
 
 def elUsuario(usuario):
@@ -2265,4 +2312,27 @@ def elUsuario(usuario):
   root.title(f"SLOW - USUARIO: {nombreUsuario}")
   tomarInfoUsuario()
   app = App(root)
+  root.mainloop()
+
+def verAppSinLogin():
+  global idUsuario, infoUsuario
+  global root, ac, id, play, ancho, alto, History_Videos, vias
+  
+  root = Tk()
+
+  ac=False
+  id = 1
+  play=False
+  root.title("SLOW - Modo Invitado")
+  ancho = root.winfo_screenwidth()
+  alto = root.winfo_screenheight()
+  root.geometry(f"{ancho}x{alto}+0+0")
+  root.resizable(False,False)
+  set_window_icon(root)
+  root.configure(bg='white')
+
+  idUsuario = crearUsuarioInvitadoSiNoExiste()
+  tomarInfoUsuario()
+  app = App(root)
+  app.make_page_video()
   root.mainloop()
