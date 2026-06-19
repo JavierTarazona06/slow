@@ -26,6 +26,7 @@ from .paths import (
   road_image_path,
   vehicle_image_path,
 )
+from .window_icon import set_window_icon
 
 # interfaz principal
 class App:
@@ -2253,7 +2254,7 @@ def elUsuario(usuario):
   alto = root.winfo_screenheight()
   root.geometry(f"{ancho}x{alto}+0+0")
   root.resizable(False,False)
-  root.iconbitmap(resource_path_string("Logo_Slow_Icon_Map.ico"))
+  set_window_icon(root)
   root.configure(bg='white')
 
   idUsuario = usuario

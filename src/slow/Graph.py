@@ -3,7 +3,8 @@ from tkinter import *
 from tkinter import ttk
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
-from .paths import graph_path, path_string, resource_path_string
+from .paths import graph_path, path_string
+from .window_icon import set_window_icon
 
 class Graph:
     
@@ -20,7 +21,7 @@ class Graph:
         self.ventana=Tk()
         self.ventana.resizable(False,False)
         self.ventana.title("SLOW - Graficas y Datos")
-        self.ventana.iconbitmap(resource_path_string("Logo_Slow_Icon_Map.ico"))
+        set_window_icon(self.ventana)
         self.ventana.withdraw()
 
         self.ancho = 1120
@@ -38,7 +39,7 @@ class Graph:
         self.ventana=Tk()
         self.ventana.resizable(False,False)
         self.ventana.title("SLOW - Graficas y Datos")
-        self.ventana.iconbitmap(resource_path_string("Logo_Slow_Icon_Map.ico"))
+        set_window_icon(self.ventana)
         self.ventana.withdraw()
         
         self.ancho = args[0].ancho

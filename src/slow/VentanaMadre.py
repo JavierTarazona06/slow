@@ -1,12 +1,12 @@
 import _tkinter as Tk
 from tkinter import *
 from .paths import resource_path_string
+from .window_icon import set_window_icon
 
 class VentanaMadre():
     def __init__(self):
 
-        self.recursosGraficos = {"LOGOSLOWICO": resource_path_string("Logo_Slow_Icon_Map.ico"),
-        "LOGOSLOW": resource_path_string("Logo_Slow.png"),
+        self.recursosGraficos = {"LOGOSLOW": resource_path_string("Logo_Slow.png"),
         "DEVOLVER": resource_path_string("DEVOLVER.png"),
         "MENU": resource_path_string("MENU.png"),
         "RECARGAR": resource_path_string("RECARGAR.png"),
@@ -41,7 +41,7 @@ class VentanaMadre():
 
         self.ventana.title("SLOW")
         #self.ventana.title("SLOW - Inicio de Sesión")
-        self.ventana.iconbitmap(self.recursosGraficos["LOGOSLOWICO"])
+        set_window_icon(self.ventana)
         self.ventana.config(bg="white")
         self.ventana.geometry(f"{self.ancho}x{self.alto}+0+0")
         self.ventana.resizable(False,False)

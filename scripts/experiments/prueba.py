@@ -11,7 +11,8 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from slow.paths import graph_path, resolve_path, resource_path_string
+from slow.paths import graph_path, resolve_path
+from slow.window_icon import set_window_icon
 
 def ej1():
     root = Tk()
@@ -118,7 +119,7 @@ def ej4():
 def ej5():
     ventanaGrafica = Tk()
     ventanaGrafica.title("GraficaVideo-ID:5")
-    ventanaGrafica.iconbitmap(resource_path_string("Logo_Slow_Icon_Map.ico"))
+    set_window_icon(ventanaGrafica)
     ventanaGrafica.config(bg="white")
     ventanaGrafica.resizable(False,False)
 
